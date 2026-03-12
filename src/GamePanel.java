@@ -42,9 +42,10 @@ public class GamePanel extends Canvas implements Runnable, KeyListener {
     @Override
     public void run() {
         while (true) {
-            repaint();
-            player.move();
 
+
+            player.move();
+            repaint();
             try {
                 Thread.sleep(16);
             } catch (InterruptedException e) {

@@ -11,7 +11,7 @@ public class Player {
 
     private float x;
     private float y;
-    private int speed = 10;
+    private int speed = 5;
 
     public Player(float x, float y) {
         this.x = x;
