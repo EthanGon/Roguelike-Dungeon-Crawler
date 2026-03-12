@@ -5,13 +5,13 @@ import java.awt.event.KeyListener;
 public class GamePanel extends Canvas implements Runnable, KeyListener {
 
     private Thread thread;
-    private Player player = new Player(50,50);
+    private Player player = new Player(0,50);
     private Image offScreenDrawing;
     private Graphics offScreenPen;
 
     public GamePanel() {
         this.setBackground(Color.WHITE);
-        this.setSize(1280, 720);
+        this.setSize(1344, 960);
 
         addKeyListener(this);
         requestFocus();
@@ -36,6 +36,13 @@ public class GamePanel extends Canvas implements Runnable, KeyListener {
     }
 
     public void paint(Graphics g) {
+        for (int y = 0; y < getHeight(); y++) {
+            for (int x = 0; x < getWidth(); x++) {
+                g.fillRect(x * 96, y * 96, 96-1, 96-1);
+            }
+        }
+
+
         player.draw(g);
     }
 
