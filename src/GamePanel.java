@@ -28,12 +28,12 @@ public class GamePanel extends Canvas implements Runnable, KeyListener {
     }
 
     public void paint(Graphics g) {
-        g.setColor(Color.BLACK);
-        for (int y = 0; y < mapSizeY; y++) {
-            for (int x = 0; x < mapSizeX; x++) {
-                g.fillRect(x * pixelSize, y * pixelSize, pixelSize-1, pixelSize-1);
-            }
-        }
+//        g.setColor(Color.BLACK);
+//        for (int y = 0; y < mapSizeY; y++) {
+//            for (int x = 0; x < mapSizeX; x++) {
+//                g.fillRect(x * pixelSize, y * pixelSize, pixelSize-1, pixelSize-1);
+//            }
+//        }
 
         r1.draw(g);
 
