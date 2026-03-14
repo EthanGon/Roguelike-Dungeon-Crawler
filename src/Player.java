@@ -12,8 +12,9 @@ public class Player {
     private float x;
     private float y;
     private int speed = 5;
+    public int size = 64;
 
-    public Player(float x, float y) {
+    public Player() {
         this.x = x;
         this.y = y;
     }
@@ -27,8 +28,7 @@ public class Player {
     }
 
     public void draw(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillRect((int) x, (int) y, 64, 64);
+        g.fillRect((int) x, (int) y, size, size);
     }
 
 }
