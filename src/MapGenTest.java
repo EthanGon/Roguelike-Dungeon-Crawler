@@ -12,6 +12,8 @@ public class MapGenTest {
     int maxRoom = 10;
 
     public MapGenTest() {
+        long startTime = System.nanoTime();
+
         rects.add(new Rect(200, 200, 25, 25));
         Random random = new Random();
 
@@ -50,6 +52,10 @@ public class MapGenTest {
             processNewRooms();
 
         }
+        long endTime = System.nanoTime();
+        long elapsedTime = endTime - startTime;
+        System.out.println("Elapsed time: " + elapsedTime + " ns");
+
     }
 
     public void draw(Graphics g) {
