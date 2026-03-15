@@ -12,13 +12,15 @@ public class GamePanel extends Canvas implements Runnable, KeyListener {
     private int pixelSize = 96;
     private int mapSizeX = 14;
     private int mapSizeY = 10;
-    Room r1 = new Room();
+    Room r1 = new Room(0,0);
+    MapGenTest mapGen;
 
 
     public GamePanel() {
         this.setBackground(Color.WHITE);
         this.setSize(pixelSize * mapSizeX, pixelSize * mapSizeY);
-        player = new Player();
+        mapGen = new MapGenTest();
+        player = new Player((getWidth()/2) - 32, (getHeight()/2) - 32);
 
         addKeyListener(this);
         requestFocus();
@@ -39,6 +41,8 @@ public class GamePanel extends Canvas implements Runnable, KeyListener {
 
         g.setColor(Color.YELLOW);
         player.draw(g);
+
+        mapGen.draw(g);
     }
 
     @Override

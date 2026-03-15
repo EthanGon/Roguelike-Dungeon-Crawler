@@ -14,7 +14,7 @@ public class Player {
     private int speed = 5;
     public int size = 64;
 
-    public Player() {
+    public Player(int x, int y) {
         this.x = x;
         this.y = y;
     }

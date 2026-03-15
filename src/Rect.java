@@ -7,6 +7,8 @@ public class Rect {
     int w;
     int h;
 
+    boolean[] dir = new boolean[4];
+
     public Rect(int x, int y, int w, int h) {
         this.x = x;
         this.y = y;
@@ -14,9 +16,17 @@ public class Rect {
         this.h = h;
     }
 
+    public Rect(int x, int y, int w, int h, int val) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+
+        dir[val] = true;
+    }
+
 
     public void draw(Graphics g) {
-        g.setColor(Color.RED);
         g.drawRect(x, y, w, h);
     }
 
