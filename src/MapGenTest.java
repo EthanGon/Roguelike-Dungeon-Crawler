@@ -2,6 +2,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 
 
 public class MapGenTest {
@@ -12,12 +13,14 @@ public class MapGenTest {
 
     public MapGenTest() {
         rects.add(new Rect(200, 200, 25, 25));
+        Random random = new Random();
 
         while (rects.size() < maxRoom) {
             for (int i = 0; i < rects.size(); i++) {
                 Rect curr = rects.get(i);
 
-                int dir = (int) (Math.random() * 4);
+                // randomize which direction to spawn a room
+                int dir = random.nextInt(4);
 
                 if (curr.dir[dir] == true) { // already has a connection there
                     continue;
@@ -44,12 +47,9 @@ public class MapGenTest {
                 }
 
             }
-            System.out.println(rects.size());
             processNewRooms();
 
         }
-        System.out.println("Number of rooms: " + rects.size());
-
     }
 
     public void draw(Graphics g) {
@@ -83,7 +83,6 @@ public class MapGenTest {
             if (rects.get(i).dir[2] == true) {
                 g.fillRect((rects.get(i).x + 12), (rects.get(i).y + 25) - 3, 1, 6);
             }
-
 
             // left/right connection (has a room to it's left)
             if (rects.get(i).dir[1] == true) {

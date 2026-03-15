@@ -13,10 +13,12 @@ public class Player {
     private float y;
     private int speed = 5;
     public int size = 64;
+    private Rect bounds;
 
     public Player(int x, int y) {
         this.x = x;
         this.y = y;
+        bounds = new Rect(x, y, size, size);
     }
 
     public void move() {
@@ -29,6 +31,9 @@ public class Player {
 
     public void draw(Graphics g) {
         g.fillRect((int) x, (int) y, size, size);
+
+        g.setColor(Color.green);
+        g.drawRect((int) x, (int) y, size, size);
     }
 
 }
