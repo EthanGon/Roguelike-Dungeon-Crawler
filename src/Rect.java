@@ -7,7 +7,22 @@ public class Rect {
     int w;
     int h;
 
+    static final int UP = 0;
+    static final int DN = 1;
+    static final int LT = 2;
+    static final int RT = 3;
+
+    static final int UL = 4;
+    static final int DL = 5;
+    static final int UR = 6;
+    static final int DR = 7;
+
+    // used for map dir
     boolean[] dir = new boolean[4];
+
+    // used for dir object is facing
+    int direction;
+    boolean project;
 
     public Rect(int x, int y, int w, int h) {
         this.x = x;
@@ -25,9 +40,45 @@ public class Rect {
         dir[val] = true;
     }
 
+    public void pushLeft(Rect r)
+    {
+        r.x -= (r.x + r.w - x + 1);
+    }
+
+    public void pushRight(Rect r)
+    {
+        r.x += (x + w - r.x + 1);
+    }
+
+    public void pushUp(Rect r)
+    {
+        r.y -= (r.y + r.h - y + 1);
+    }
+
+    public void pushDown(Rect r)
+    {
+        r.y += (y + h - r.y + 1);
+    }
+
+    public void pushes(Rect r)
+    {
+        if(r.direction == UP)  pushDown(r);
+        if(r.direction == DN)  pushUp(r);
+        if(r.direction == LT)  pushRight(r);
+        if(r.direction == RT)  pushLeft(r);
+    }
+
 
     public void draw(Graphics g) {
-        g.drawRect(x, y, w, h);
+
+        if (project) {
+            int cx = Camera.GetInstance().getX();
+            int cy = Camera.GetInstance().getY();
+
+            g.drawRect(x - cx, y - cy, w, h);
+        } else {
+            g.drawRect(x, y, w, h);
+        }
     }
 
     public boolean overlaps(Rect other) {

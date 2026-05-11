@@ -12,15 +12,16 @@ public class GamePanel extends Canvas implements Runnable, KeyListener {
     private int pixelSize = 96;
     private int mapSizeX = 14;
     private int mapSizeY = 10;
-    Room r1 = new Room(0,0);
-    MapGenTest mapGen;
+    private MapGen mapGen;
+    private Camera mainCam;
 
 
     public GamePanel() {
         this.setBackground(Color.WHITE);
-        this.setSize(pixelSize * mapSizeX, pixelSize * mapSizeY);
-        mapGen = new MapGenTest();
-        player = new Player((getWidth()/2) - 32, (getHeight()/2) - 32);
+
+        mainCam = new Camera();
+        mapGen  = new MapGen();
+        player  = new Player((getWidth()/2) - 32, (getHeight()/2) - 32);
 
         addKeyListener(this);
         requestFocus();
@@ -30,27 +31,18 @@ public class GamePanel extends Canvas implements Runnable, KeyListener {
     }
 
     public void paint(Graphics g) {
-//        g.setColor(Color.BLACK);
-//        for (int y = 0; y < mapSizeY; y++) {
-//            for (int x = 0; x < mapSizeX; x++) {
-//                g.fillRect(x * pixelSize, y * pixelSize, pixelSize-1, pixelSize-1);
-//            }
-//        }
-
-        r1.draw(g);
+        mapGen.draw(g);
 
         g.setColor(Color.YELLOW);
         player.draw(g);
 
-        mapGen.draw(g);
+
     }
 
     @Override
     public void run() {
         while (true) {
 
-
-            player.move();
             repaint();
             try {
                 Thread.sleep(16);
@@ -64,12 +56,12 @@ public class GamePanel extends Canvas implements Runnable, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        player.pressingKey[e.getKeyCode()] = true;
+
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        player.pressingKey[e.getKeyCode()] = false;
+
     }
 
     // Creates the back buffer to draw on
@@ -88,3 +80,10 @@ public class GamePanel extends Canvas implements Runnable, KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {}
 }
+
+//        g.setColor(Color.BLACK);
+//        for (int y = 0; y < mapSizeY; y++) {
+//            for (int x = 0; x < mapSizeX; x++) {
+//                g.fillRect(x * pixelSize, y * pixelSize, pixelSize-1, pixelSize-1);
+//            }
+//        }

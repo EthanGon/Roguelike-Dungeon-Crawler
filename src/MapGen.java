@@ -5,46 +5,78 @@ import java.util.Queue;
 import java.util.Random;
 
 
-public class MapGenTest {
+public class MapGen {
     ArrayList<Rect> rects = new ArrayList<>();
-    Queue<Rect> newRooms = new LinkedList<>();
+    ArrayList<Room> rooms = new ArrayList<>();
+    
+    Queue<Rect> newRoomsOnMap = new LinkedList<>();
+    Queue<Room> newRooms = new LinkedList<>();
+    private Room containingPlayer;
+    private static MapGen instance;
 
     int maxRoom = 10;
 
-    public MapGenTest() {
+    public int rw = 96 * 14;
+    public int rh = 96 * 10;
+
+    public MapGen() {
+        instance = this;
         long startTime = System.nanoTime();
 
+        // creates the starting room
         rects.add(new Rect(200, 200, 25, 25));
+        rooms.add(new Room(0,0));
+        containingPlayer = rooms.getFirst();
         Random random = new Random();
 
         while (rects.size() < maxRoom) {
             for (int i = 0; i < rects.size(); i++) {
                 Rect curr = rects.get(i);
+                Room currRoom = rooms.get(i);
 
                 // randomize which direction to spawn a room
                 int dir = random.nextInt(4);
 
-                if (curr.dir[dir] == true) { // already has a connection there
+
+                if (curr.dir[dir] == true && currRoom.adjRooms[dir] != null) { // already has a connection there
                     continue;
                 }
 
+                Room newRoomToAdd = null;
+
+                // directions go counter-clockwise
                 if (dir == 0) { // TOP
                     if (roomAtPosition(rects.get(i).x, rects.get(i).y - 25)) {continue;}
-                    newRooms.add(new Rect(curr.x, curr.y - 25, 25, 25, 2));
+                    newRoomsOnMap.add(new Rect(curr.x, curr.y - 25, 25, 25, 2));
+
+                    newRoomToAdd = new Room(currRoom.x, currRoom.y - rh, 2, currRoom);
+                    newRooms.add(newRoomToAdd);
+
                 } else if (dir == 1) { // LEFT
                     if (roomAtPosition(rects.get(i).x - 25, rects.get(i).y)) {continue;}
-                    newRooms.add(new Rect(curr.x - 25, curr.y, 25, 25, 3));
+                    newRoomsOnMap.add(new Rect(curr.x - 25, curr.y, 25, 25, 3));
+
+                    newRoomToAdd = new Room(currRoom.x - rw, currRoom.y, 3, currRoom);
+                    newRooms.add(newRoomToAdd);
                 } else if (dir == 2) { // BOTTOM
                     if (roomAtPosition(rects.get(i).x, rects.get(i).y + 25)) {continue;}
-                    newRooms.add(new Rect(curr.x, curr.y + 25, 25, 25, 0));
+                    newRoomsOnMap.add(new Rect(curr.x, curr.y + 25, 25, 25, 0));
+
+                    newRoomToAdd = new Room(currRoom.x, currRoom.y + rh, 0, currRoom);
+                    newRooms.add(newRoomToAdd);
                 } else { // RIGHT
                     if (roomAtPosition(rects.get(i).x + 25, rects.get(i).y)) {continue;}
-                    newRooms.add(new Rect(curr.x + 25, curr.y, 25, 25, 1));
+                    newRoomsOnMap.add(new Rect(curr.x + 25, curr.y, 25, 25, 1));
+
+                    newRoomToAdd = new Room(currRoom.x + rw, currRoom.y, 1, currRoom);
+                    newRooms.add(newRoomToAdd);
                 }
+
                 curr.dir[dir] = true;
+                currRoom.adjRooms[dir] = newRoomToAdd;
 
                 // Check if processing all room results in max rooms
-                if (rects.size() + newRooms.size() >= maxRoom) {
+                if (rects.size() + newRoomsOnMap.size() >= maxRoom) {
                     break;
                 }
 
@@ -59,6 +91,10 @@ public class MapGenTest {
     }
 
     public void draw(Graphics g) {
+        for (int i = 0; i < rects.size(); i++) {
+            rooms.get(i).draw(g);
+        }
+
         for (int i = 0; i < rects.size(); i++) {
             g.setColor(Color.black);
 
@@ -106,9 +142,14 @@ public class MapGenTest {
     }
 
     public void processNewRooms() {
-        for (Rect rect : newRooms) {
+        for (Rect rect : newRoomsOnMap) {
             rects.add(rect);
         }
+
+        for (Room room : newRooms) {
+            rooms.add(room);
+        }
+        newRoomsOnMap.clear();
         newRooms.clear();
     }
 
@@ -123,7 +164,7 @@ public class MapGenTest {
             }
         }
 
-        for (Rect rect : newRooms) {
+        for (Rect rect : newRoomsOnMap) {
             if (rect.x == x && rect.y == y) {
                 return true;
             }
@@ -131,6 +172,30 @@ public class MapGenTest {
 
         return false;
     }
+
+    public Room getRoom(int x, int y) {
+        for (Room rm : rooms) {
+            if (rm.x == x && rm.y == y) {
+                return rm;
+            }
+        }
+
+        return null;
+    }
+
+    public void setRoomContainingPlayer(Room rm) {
+        containingPlayer = rm;
+    }
+
+    public Room getRoomContainingPlayer() {
+        return containingPlayer;
+    }
+
+    public static MapGen GetInstance() {
+        return instance;
+    }
+
+
 
 
 }
