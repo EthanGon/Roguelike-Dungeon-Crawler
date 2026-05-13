@@ -8,10 +8,20 @@ public class Game extends GameBase {
 
     public void inGameLoop() {
 
+
+
         if(pressing[_W])   p.moveUP(5);
         if(pressing[_S])   p.moveDN(5);
         if(pressing[_A])   p.moveLT(5);
         if(pressing[_D])   p.moveRT(5);
+
+        if (pressing[_1]) {
+            map.toggleCurrentRoomState(true);
+        } else if (pressing[_2]) {
+            map.toggleCurrentRoomState(false);
+        }
+
+
         p.checkCollision();
 
     }

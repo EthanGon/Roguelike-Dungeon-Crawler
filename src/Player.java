@@ -71,7 +71,6 @@ public class Player extends Rect {
     public void handleRoomSwitch() {
         Room currRoom = MapGen.GetInstance().getRoomContainingPlayer();
 
-
         int offsetX = MapGen.GetInstance().rw;
         int offsetY = MapGen.GetInstance().rh;
 
@@ -101,8 +100,11 @@ public class Player extends Rect {
 
         newRoom = MapGen.GetInstance().getRoom(currRoom.x + ox, currRoom.y + oy);
         Camera.GetInstance().setPos(newRoom.x, newRoom.y);
+
+        // centers the player on the spawn box
         this.x = (newRoom.connectionSpawnPoints[dir].x) + ((96 - (size))/2);
         this.y = (newRoom.connectionSpawnPoints[dir].y) + ((96 - (size))/2);
+
         MapGen.GetInstance().setRoomContainingPlayer(newRoom);
     }
 

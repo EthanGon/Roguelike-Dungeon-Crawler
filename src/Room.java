@@ -5,30 +5,37 @@ import java.awt.*;
 
 public class Room {
 
-    Image roomImage =           new ImageIcon(getClass().getResource("room_art/room.png")).getImage();
-    Image northSouthDoorOff =   new ImageIcon(getClass().getResource("room_art/ns-blockade-off.png")).getImage();
-    Image eastWestDoorOff =     new ImageIcon(getClass().getResource("room_art/ew-blockade-off.png")).getImage();
+    private Image roomImage =           new ImageIcon(getClass().getResource("room_art/room.png")).getImage();
+    private Image northSouthDoorOff =   new ImageIcon(getClass().getResource("room_art/ns-blockade-off.png")).getImage();
+    private Image eastWestDoorOff =     new ImageIcon(getClass().getResource("room_art/ew-blockade-off.png")).getImage();
+    private Image northSouthDoorOn =   new ImageIcon(getClass().getResource("room_art/ns-blockade-on.png")).getImage();
+    private Image eastWestDoorOn =     new ImageIcon(getClass().getResource("room_art/ew-blockade-on.png")).getImage();
+
     private int pixelSize = 96;
+    private boolean roomCleared;
     int rw = 96 * 14;
     int rh = 96 * 10;
 
     Rect[] roomBounds = new Rect[8];
     Rect roomBox;
+    public boolean hasEnemies;
 
     private Room north, south, east, west;
     public Room[] adjRooms = new Room[4];
+    private Rect[] doorBounds = new Rect[4];
 
     int x;
     int y;
 
     public Rect[] connectionSpawnPoints = new Rect[4];
 
-
     public Room(int x, int y) {
         this.x = x;
         this.y = y;
         initRoomBounds();
         createRoomSwitchSpawns();
+
+
     }
 
     public Room(int x, int y, int connection, Room cameFrom) {
@@ -61,16 +68,26 @@ public class Room {
         g.drawImage(roomImage, x - cx , y - cy, null);
 
         // draw the connection to adjacent rooms
-        if (adjRooms[0] != null) {g.drawImage(northSouthDoorOff, (x + 576) - cx, y - cy, null);} // 0 TOP
-        if (adjRooms[2] != null) {g.drawImage(northSouthDoorOff, (x + 576) - cx, (y + 864) - cy, null);} // 2 BOT
-        if (adjRooms[1] != null) {g.drawImage(eastWestDoorOff, x - cx, (y + 384) - cy, null);} // 3 EAST
-        if (adjRooms[3] != null) {g.drawImage(eastWestDoorOff, (x + 1248) - cx, (y + 384) - cy, null);} // 1 WEST
+
+
+        if (!roomCleared) {
+            if (adjRooms[0] != null) {g.drawImage(northSouthDoorOn, (x + 576) - cx, y - cy, null);} // 0 TOP
+            if (adjRooms[2] != null) {g.drawImage(northSouthDoorOn, (x + 576) - cx, (y + 864) - cy, null);} // 2 BOT
+            if (adjRooms[1] != null) {g.drawImage(eastWestDoorOn, x - cx, (y + 384) - cy, null);} // 3 EAST
+            if (adjRooms[3] != null) {g.drawImage(eastWestDoorOn, (x + 1248) - cx, (y + 384) - cy, null);} // 1 WEST
+        } else {
+            if (adjRooms[0] != null) {g.drawImage(northSouthDoorOff, (x + 576) - cx, y - cy, null);} // 0 TOP
+            if (adjRooms[2] != null) {g.drawImage(northSouthDoorOff, (x + 576) - cx, (y + 864) - cy, null);} // 2 BOT
+            if (adjRooms[1] != null) {g.drawImage(eastWestDoorOff, x - cx, (y + 384) - cy, null);} // 3 EAST
+            if (adjRooms[3] != null) {g.drawImage(eastWestDoorOff, (x + 1248) - cx, (y + 384) - cy, null);} // 1 WEST
+        }
 
         drawRoomBounds(g);
 
-//        for (Rect spawn : connectionSpawnPoints) {
-//            spawn.draw(g);
-//        }
+        g.setColor(Color.green);
+        for (Rect spawn : connectionSpawnPoints) {
+            spawn.draw(g);
+        }
 
     }
 
@@ -91,6 +108,15 @@ public class Room {
             b.project = true;
         }
 
+        doorBounds[0] = new Rect(x + 576, y, 96 * 2, 96); // TOP
+        doorBounds[2] = new Rect(x + 576, y + 864, 96 * 2, 96); // BOT
+        doorBounds[1] = new Rect(x, y + 384, 96, 96 * 2); // LEFT
+        doorBounds[3] = new Rect(x + 1248, y + 384, 96, 96 * 2); // RIGHT
+
+        for (Rect b : doorBounds) {
+            b.project = true;
+        }
+
         roomBox = new Rect(x, y, rw, rh);
     }
 
@@ -98,6 +124,13 @@ public class Room {
         g.setColor(Color.red);
         for (int i = 0; i < roomBounds.length; i++) {
             roomBounds[i].draw(g);
+        }
+
+        g.setColor(Color.blue);
+        for (int i = 0; i < doorBounds.length; i++) {
+            if (doorBounds[i] != null) {
+                doorBounds[i].draw(g);
+            }
         }
     }
 
@@ -107,6 +140,38 @@ public class Room {
                roomBounds[i].pushes(Player.GetPlayer());
            }
        }
+
+       for (int i = 0; i < doorBounds.length; i++) {
+           if (doorBounds[i] != null && doorBounds[i].overlaps(Player.GetPlayer())) {
+               doorBounds[i].pushes(Player.GetPlayer());
+           }
+       }
    }
+
+   public Rect getDoor(int index) {
+        return doorBounds[index];
+   }
+
+   public void setRoomUncleared() {
+        roomCleared = false;
+        for (int i = 0; i < adjRooms.length; i++) {
+            if (adjRooms[i] != null) {
+                doorBounds[i].hasCollision = true;
+            }
+        }
+   }
+
+    public void setRoomCleared() {
+        roomCleared = true;
+        hasEnemies = false;
+
+        for (int i = 0; i < adjRooms.length; i++) {
+            if (adjRooms[i] != null) {
+                doorBounds[i].hasCollision = false;
+            }
+        }
+    }
+
+
 
 }

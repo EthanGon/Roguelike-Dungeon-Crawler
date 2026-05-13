@@ -23,6 +23,7 @@ public class Rect {
     // used for dir object is facing
     int direction;
     boolean project;
+    boolean hasCollision = true;
 
     public Rect(int x, int y, int w, int h) {
         this.x = x;
@@ -62,10 +63,12 @@ public class Rect {
 
     public void pushes(Rect r)
     {
-        if(r.direction == UP)  pushDown(r);
-        if(r.direction == DN)  pushUp(r);
-        if(r.direction == LT)  pushRight(r);
-        if(r.direction == RT)  pushLeft(r);
+        if (hasCollision) {
+            if(r.direction == UP)  pushDown(r);
+            if(r.direction == DN)  pushUp(r);
+            if(r.direction == LT)  pushRight(r);
+            if(r.direction == RT)  pushLeft(r);
+        }
     }
 
 

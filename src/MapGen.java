@@ -6,15 +6,13 @@ import java.util.Random;
 
 
 public class MapGen {
-    ArrayList<Rect> rects = new ArrayList<>();
-    ArrayList<Room> rooms = new ArrayList<>();
-    
-    Queue<Rect> newRoomsOnMap = new LinkedList<>();
-    Queue<Room> newRooms = new LinkedList<>();
+    private ArrayList<Rect> rects = new ArrayList<>();
+    private ArrayList<Room> rooms = new ArrayList<>();
+    private Queue<Rect> newRoomsOnMap = new LinkedList<>();
+    private Queue<Room> newRooms = new LinkedList<>();
     private Room containingPlayer;
     private static MapGen instance;
-
-    int maxRoom = 10;
+    private int maxRoom = 12;
 
     public int rw = 96 * 14;
     public int rh = 96 * 10;
@@ -37,7 +35,6 @@ public class MapGen {
                 // randomize which direction to spawn a room
                 int dir = random.nextInt(4);
 
-
                 if (curr.dir[dir] == true && currRoom.adjRooms[dir] != null) { // already has a connection there
                     continue;
                 }
@@ -50,6 +47,7 @@ public class MapGen {
                     newRoomsOnMap.add(new Rect(curr.x, curr.y - 25, 25, 25, 2));
 
                     newRoomToAdd = new Room(currRoom.x, currRoom.y - rh, 2, currRoom);
+                    newRoomToAdd.getDoor(2).hasCollision = true;
                     newRooms.add(newRoomToAdd);
 
                 } else if (dir == 1) { // LEFT
@@ -57,22 +55,26 @@ public class MapGen {
                     newRoomsOnMap.add(new Rect(curr.x - 25, curr.y, 25, 25, 3));
 
                     newRoomToAdd = new Room(currRoom.x - rw, currRoom.y, 3, currRoom);
+                    newRoomToAdd.getDoor(3).hasCollision = true;
                     newRooms.add(newRoomToAdd);
                 } else if (dir == 2) { // BOTTOM
                     if (roomAtPosition(rects.get(i).x, rects.get(i).y + 25)) {continue;}
                     newRoomsOnMap.add(new Rect(curr.x, curr.y + 25, 25, 25, 0));
 
                     newRoomToAdd = new Room(currRoom.x, currRoom.y + rh, 0, currRoom);
+                    newRoomToAdd.getDoor(0).hasCollision = true;
                     newRooms.add(newRoomToAdd);
                 } else { // RIGHT
                     if (roomAtPosition(rects.get(i).x + 25, rects.get(i).y)) {continue;}
                     newRoomsOnMap.add(new Rect(curr.x + 25, curr.y, 25, 25, 1));
 
                     newRoomToAdd = new Room(currRoom.x + rw, currRoom.y, 1, currRoom);
+                    newRoomToAdd.getDoor(1).hasCollision = true;
                     newRooms.add(newRoomToAdd);
                 }
 
                 curr.dir[dir] = true;
+                currRoom.getDoor(dir).hasCollision = true;
                 currRoom.adjRooms[dir] = newRoomToAdd;
 
                 // Check if processing all room results in max rooms
@@ -84,21 +86,50 @@ public class MapGen {
             processNewRooms();
 
         }
+
+        // Decide if room should have enemies
+        for (int i = 0; i < rooms.size(); i++) {
+            int spawnEnemies = random.nextInt(2);
+
+            if (spawnEnemies == 0) {
+                rooms.get(i).hasEnemies = true;
+                rooms.get(i).setRoomUncleared();
+            } else {
+                rooms.get(i).hasEnemies = false;
+                rooms.get(i).setRoomCleared();
+            }
+
+        }
+
+        rooms.getFirst().setRoomCleared();
+
         long endTime = System.nanoTime();
         long elapsedTime = endTime - startTime;
-        System.out.println("Elapsed time: " + elapsedTime + " ns");
+        System.out.println("Map Creation Elapsed Time: " + (elapsedTime / 1e+9 + " seconds"));
 
     }
 
     public void draw(Graphics g) {
-        for (int i = 0; i < rects.size(); i++) {
+        drawRooms(g);
+        drawMiniMap(g);
+
+    }
+
+    public void drawRooms(Graphics g) {
+        for (int i = 0; i < maxRoom; i++) {
             rooms.get(i).draw(g);
         }
+    }
 
+    public void drawMiniMap(Graphics g) {
         for (int i = 0; i < rects.size(); i++) {
             g.setColor(Color.black);
 
-            if (i == 0) {
+            if (rooms.get(i).hasEnemies) {
+                g.setColor(Color.red);
+            }
+
+            if (rooms.get(i) == containingPlayer) {
                 g.setColor(Color.blue);
             }
 
@@ -137,8 +168,6 @@ public class MapGen {
             }
 
         }
-
-
     }
 
     public void processNewRooms() {
@@ -193,6 +222,11 @@ public class MapGen {
 
     public static MapGen GetInstance() {
         return instance;
+    }
+
+    public void toggleCurrentRoomState(boolean val) {
+        if (val) containingPlayer.setRoomCleared();
+        if (!val) containingPlayer.setRoomUncleared();
     }
 
 
