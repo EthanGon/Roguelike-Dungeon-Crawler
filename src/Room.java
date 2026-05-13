@@ -8,8 +8,8 @@ public class Room {
     private Image roomImage =           new ImageIcon(getClass().getResource("room_art/room.png")).getImage();
     private Image northSouthDoorOff =   new ImageIcon(getClass().getResource("room_art/ns-blockade-off.png")).getImage();
     private Image eastWestDoorOff =     new ImageIcon(getClass().getResource("room_art/ew-blockade-off.png")).getImage();
-    private Image northSouthDoorOn =   new ImageIcon(getClass().getResource("room_art/ns-blockade-on.png")).getImage();
-    private Image eastWestDoorOn =     new ImageIcon(getClass().getResource("room_art/ew-blockade-on.png")).getImage();
+    private Image northSouthDoorOn =    new ImageIcon(getClass().getResource("room_art/ns-blockade-on.png")).getImage();
+    private Image eastWestDoorOn =      new ImageIcon(getClass().getResource("room_art/ew-blockade-on.png")).getImage();
 
     private int pixelSize = 96;
     private boolean roomCleared;
