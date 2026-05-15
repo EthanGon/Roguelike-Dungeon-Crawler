@@ -1,15 +1,16 @@
 import java.awt.*;
-import java.util.Map;
 
-
-public class Player extends Rect {
+public class Player extends Sprite {
 
     private static Player instance;
-    public int size = 64;
+    public int size = 96;
     public boolean moving;
+    private final static String[] pose = {"up", "dn", "lt", "rt"};
+    int offsetX = MapGen.GetInstance().rw;
+    int offsetY = MapGen.GetInstance().rh;
 
-    public Player(int x, int y) {
-        super(x,y, 64,64);
+    public Player(int x, int y, int dir, int size) {
+        super("src/player_animation/p", x,y, size,size, dir, pose);
         this.project = true;
         instance = this;
     }
@@ -71,8 +72,7 @@ public class Player extends Rect {
     public void handleRoomSwitch() {
         Room currRoom = MapGen.GetInstance().getRoomContainingPlayer();
 
-        int offsetX = MapGen.GetInstance().rw;
-        int offsetY = MapGen.GetInstance().rh;
+
 
 
         if (y <= currRoom.y) { // TOP
@@ -108,8 +108,8 @@ public class Player extends Rect {
         MapGen.GetInstance().setRoomContainingPlayer(newRoom);
     }
 
-    public void draw(Graphics g) {
-        super.draw(g);
-    }
+//    public void draw(Graphics g) {
+//        super.draw(g);
+//    }
 
 }

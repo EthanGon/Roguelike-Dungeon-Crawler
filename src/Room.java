@@ -13,16 +13,17 @@ public class Room {
 
     private int pixelSize = 96;
     private boolean roomCleared;
-    int rw = 96 * 14;
-    int rh = 96 * 10;
+    private int rw = 96 * 14;
+    private int rh = 96 * 10;
 
-    Rect[] roomBounds = new Rect[8];
-    Rect roomBox;
+    private Rect[] roomBounds = new Rect[8];
+    private Rect roomBox;
     public boolean hasEnemies;
 
-    private Room north, south, east, west;
     public Room[] adjRooms = new Room[4];
     private Rect[] doorBounds = new Rect[4];
+    private Rect[] enemySpawnPoints;
+
 
     int x;
     int y;
@@ -34,7 +35,6 @@ public class Room {
         this.y = y;
         initRoomBounds();
         createRoomSwitchSpawns();
-
 
     }
 
@@ -68,8 +68,6 @@ public class Room {
         g.drawImage(roomImage, x - cx , y - cy, null);
 
         // draw the connection to adjacent rooms
-
-
         if (!roomCleared) {
             if (adjRooms[0] != null) {g.drawImage(northSouthDoorOn, (x + 576) - cx, y - cy, null);} // 0 TOP
             if (adjRooms[2] != null) {g.drawImage(northSouthDoorOn, (x + 576) - cx, (y + 864) - cy, null);} // 2 BOT

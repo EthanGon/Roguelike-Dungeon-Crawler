@@ -12,13 +12,18 @@ public class MapGen {
     private Queue<Room> newRooms = new LinkedList<>();
     private Room containingPlayer;
     private static MapGen instance;
-    private int maxRoom = 12;
+    private int maxRoom = 15;
 
     public int rw = 96 * 14;
     public int rh = 96 * 10;
 
     public MapGen() {
         instance = this;
+        createRooms();
+
+    }
+
+    public void createRooms() {
         long startTime = System.nanoTime();
 
         // creates the starting room
@@ -29,6 +34,8 @@ public class MapGen {
 
         while (rects.size() < maxRoom) {
             for (int i = 0; i < rects.size(); i++) {
+                System.out.println(rooms.size());
+
                 Rect curr = rects.get(i);
                 Room currRoom = rooms.get(i);
 
@@ -100,25 +107,23 @@ public class MapGen {
             }
 
         }
-
         rooms.getFirst().setRoomCleared();
 
         long endTime = System.nanoTime();
         long elapsedTime = endTime - startTime;
         System.out.println("Map Creation Elapsed Time: " + (elapsedTime / 1e+9 + " seconds"));
-
     }
 
     public void draw(Graphics g) {
         drawRooms(g);
-        drawMiniMap(g);
-
     }
 
     public void drawRooms(Graphics g) {
-        for (int i = 0; i < maxRoom; i++) {
-            rooms.get(i).draw(g);
-        }
+//        for (int i = 0; i < maxRoom; i++) {
+//            rooms.get(i).draw(g);
+//        }
+
+        containingPlayer.draw(g);
     }
 
     public void drawMiniMap(Graphics g) {
@@ -171,13 +176,9 @@ public class MapGen {
     }
 
     public void processNewRooms() {
-        for (Rect rect : newRoomsOnMap) {
-            rects.add(rect);
-        }
+        rects.addAll(newRoomsOnMap);
 
-        for (Room room : newRooms) {
-            rooms.add(room);
-        }
+        rooms.addAll(newRooms);
         newRoomsOnMap.clear();
         newRooms.clear();
     }
@@ -214,6 +215,8 @@ public class MapGen {
 
     public void setRoomContainingPlayer(Room rm) {
         containingPlayer = rm;
+
+        // TODO: rm.spawnEnemies if hasEnemies && notCleared
     }
 
     public Room getRoomContainingPlayer() {

@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.*;
 
 public class Animation {
@@ -23,9 +24,8 @@ public class Animation {
 
     public Image stillImage()
     {
-        return images[0];
+        return images[1];
     }
-
 
     public Image nextImage()
     {
@@ -34,7 +34,7 @@ public class Animation {
         if(delay == 0)
         {
             if( currentImage == images.length-1) {
-                currentImage = 1;
+                currentImage = 0;
             } else {
                 currentImage++;
             }
@@ -48,6 +48,9 @@ public class Animation {
 
     public Image getImage(String filename)
     {
+        //new ImageIcon(getClass().getResource("room_art/room.png")).getImage();
+
         return Toolkit.getDefaultToolkit().getImage(filename);
+       // return new ImageIcon(filename).getImage();
     }
 }

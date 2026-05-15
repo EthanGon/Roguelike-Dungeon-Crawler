@@ -21,7 +21,7 @@ public class GamePanel extends Canvas implements Runnable, KeyListener {
 
         mainCam = new Camera();
         mapGen  = new MapGen();
-        player  = new Player((getWidth()/2) - 32, (getHeight()/2) - 32);
+        //player  = new Player((getWidth()/2) - 32, (getHeight()/2) - 32);
 
         addKeyListener(this);
         requestFocus();

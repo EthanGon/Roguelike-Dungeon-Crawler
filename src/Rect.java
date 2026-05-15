@@ -7,6 +7,12 @@ public class Rect {
     int w;
     int h;
 
+
+    int vx;
+    int vy;
+
+    int direction = DN;
+
     static final int UP = 0;
     static final int DN = 1;
     static final int LT = 2;
@@ -21,7 +27,6 @@ public class Rect {
     boolean[] dir = new boolean[4];
 
     // used for dir object is facing
-    int direction;
     boolean project;
     boolean hasCollision = true;
 
@@ -70,7 +75,6 @@ public class Rect {
             if(r.direction == RT)  pushLeft(r);
         }
     }
-
 
     public void draw(Graphics g) {
 
