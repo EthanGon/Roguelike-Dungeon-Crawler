@@ -11,7 +11,6 @@ public class Room {
     private Image northSouthDoorOn =    new ImageIcon(getClass().getResource("room_art/ns-blockade-on.png")).getImage();
     private Image eastWestDoorOn =      new ImageIcon(getClass().getResource("room_art/ew-blockade-on.png")).getImage();
 
-
     private static int numRooms = 0;
     private final int x;
     private final int y;
@@ -41,14 +40,9 @@ public class Room {
     }
 
     public Room(int x, int y, int connection, Room cameFrom) {
+        this(x,y);
         adjRooms[connection] = cameFrom;
-        this.x = x;
-        this.y = y;
-        initRoomBounds();
-        createRoomSwitchSpawns();
-        createWalkableGrid();
-        numRooms++;
-        roomNumber = numRooms;
+
     }
 
     public void createRoomSwitchSpawns() {

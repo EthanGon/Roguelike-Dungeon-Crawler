@@ -25,6 +25,12 @@ public class Game extends GameBase {
         }
 
 
+
+        handleShowingMiniMap();
+
+
+
+
         p.checkCollision();
 
         test.chase(p);
@@ -38,5 +44,16 @@ public class Game extends GameBase {
 
 
         map.drawMiniMap(g);
+    }
+
+    public void handleShowingMiniMap() {
+        if (pressing[_Q] && map.canSwitchMap) {
+            map.showMiniMap = !map.showMiniMap;
+            map.canSwitchMap = false;
+        }
+
+        if (!pressing[_Q]) {
+            map.canSwitchMap = true;
+        }
     }
 }

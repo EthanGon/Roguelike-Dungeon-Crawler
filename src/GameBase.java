@@ -72,6 +72,7 @@ public abstract class GameBase extends Canvas implements Runnable, KeyListener {
     public static final int SEMICOLON   = KeyEvent.VK_SEMICOLON;
     public static final int COLON       = KeyEvent.VK_COLON;
     public static final int QUOTE       = KeyEvent.VK_QUOTE;
+    public static final int TAB         = KeyEvent.VK_TAB;
 
     public static final int F1          = KeyEvent.VK_F1;
     public static final int F2          = KeyEvent.VK_F2;

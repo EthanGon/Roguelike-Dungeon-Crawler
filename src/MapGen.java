@@ -12,7 +12,7 @@ public class MapGen {
     private Queue<Room> newRooms = new LinkedList<>();
     private Room containingPlayer;
     private static MapGen instance;
-    private int maxRoom = 15;
+    private int maxRoom = 12;
 
     public int rw = 96 * 14;
     public int rh = 96 * 10;
@@ -20,11 +20,12 @@ public class MapGen {
     private final int LEFT = 1;
     private final int DOWN = 2;
     private final int RIGHT = 3;
+    public boolean showMiniMap = true;
+    public boolean canSwitchMap = true;
 
     public MapGen() {
         instance = this;
         createRooms();
-
     }
 
     public void createRooms() {
@@ -118,6 +119,7 @@ public class MapGen {
 
     public void draw(Graphics g) {
         drawRooms(g);
+
     }
 
     public void drawRooms(Graphics g) {
@@ -125,8 +127,21 @@ public class MapGen {
     }
 
     public void drawMiniMap(Graphics g) {
+        if (!showMiniMap) {
+            return;
+        }
+
+        int ox = 3;
+        int oy = 3;
+        int miniOffset = 10;
+
+        g.setColor(new Color(0, 0, 0, 100));
+        g.fillRect(lowestRoomX() - miniOffset, lowestRoomY() - miniOffset, (highestRoomX() - lowestRoomX()) + miniOffset * 2, (highestRoomY() - lowestRoomY()) + miniOffset * 2);
+
         for (int i = 0; i < rects.size(); i++) {
-            g.setColor(Color.black);
+
+
+            g.setColor(Color.gray);
 
             if (rooms.get(i).hasEnemies()) {
                 g.setColor(Color.red);
@@ -135,14 +150,17 @@ public class MapGen {
             if (rooms.get(i) == containingPlayer) {
                 g.setColor(Color.blue);
             }
-
             g.fillRect(rects.get(i).x, rects.get(i).y, rects.get(i).w, rects.get(i).h);
 
-            g.setColor(Color.magenta);
-            rects.get(i).draw(g);
+
+            g.setColor(Color.WHITE);
+            g.drawRect(rects.get(i).x, rects.get(i).y, rects.get(i).w, rects.get(i).h);
+
+
 
         }
 
+        // draw connections
         for (int i = 0; i < rects.size(); i++) {
             g.setColor(Color.WHITE);
             g.drawString(i + "", rects.get(i).x, rects.get(i).y + rects.get(i).h / 2);
@@ -228,6 +246,55 @@ public class MapGen {
     public void toggleCurrentRoomState(boolean val) {
         if (val) containingPlayer.setRoomCleared();
         if (!val) containingPlayer.setRoomUncleared();
+    }
+
+    public int lowestRoomX() {
+        int low = rects.getFirst().x;
+
+        for (Rect r : rects) {
+            if (r.x < low) {
+                low = r.x;
+            }
+        }
+
+        return low;
+    }
+
+    public int lowestRoomY() {
+        int low = rects.getFirst().y;
+
+        for (Rect r : rects) {
+            if (r.y < low) {
+                low = r.y;
+            }
+        }
+
+        return low;
+    }
+
+    public int highestRoomX() {
+        int h = (rects.getFirst().x + rects.getFirst().w);
+
+        for (Rect r : rects) {
+            if ((r.x + r.w) > h) {
+                h = r.x + r.w;
+            }
+        }
+
+
+        return h;
+    }
+
+    public int highestRoomY() {
+        int h = rects.getFirst().y + rects.getFirst().h;
+
+        for (Rect r : rects) {
+            if (r.y + r.h > h) {
+                h = r.y + r.h;
+            }
+        }
+
+        return h;
     }
 
 
