@@ -2,7 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public abstract class GameBase extends Canvas implements Runnable, KeyListener, MouseListener, MouseMotionListener {
+
+public abstract class GameBase extends Canvas implements Runnable, KeyListener {
 
     Image     off_screen;
     Graphics  off_screen_g;
@@ -13,7 +14,6 @@ public abstract class GameBase extends Canvas implements Runnable, KeyListener, 
     private int gw = pixelSize * mapSizeX;
     private int gh = pixelSize * mapSizeY;
     private LevelMusic bgm = new LevelMusic("src/sfx/binding_of_isaac_track.wav");
-
 
     boolean[] pressing = new boolean[1024];
 
@@ -101,22 +101,20 @@ public abstract class GameBase extends Canvas implements Runnable, KeyListener, 
 
             try
             {
-                Thread.sleep(1000/60);
+                Thread.sleep(16);
             }
             catch(Exception x) {};
         }
 
     }
 
-    public abstract void inGameLoop();
 
+    public abstract void inGameLoop();
 
     @Override
     public final void update(Graphics g)
     {
-        off_screen_g.setColor(Color.BLACK);
-        off_screen_g.fillRect(0,0, getWidth(), getHeight());
-
+        off_screen_g.clearRect(0,0, gw, gh);
         paint(off_screen_g);
         g.drawImage(off_screen, 0, 0 , null);
     }
@@ -133,6 +131,7 @@ public abstract class GameBase extends Canvas implements Runnable, KeyListener, 
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
+
         bgm.loop();
 
         off_screen   = createImage(gw, gh);
@@ -140,22 +139,12 @@ public abstract class GameBase extends Canvas implements Runnable, KeyListener, 
 
         this.requestFocus();
         this.addKeyListener(this);
-        this.addMouseListener(this);
-        this.addMouseMotionListener(this);
 
         thread = new Thread(this);
         thread.start();
 
 
     }
-
-    public void mouseMoved   (MouseEvent e){}
-    public void mouseDragged (MouseEvent e){}
-    public void mousePressed (MouseEvent e){}
-    public void mouseReleased(MouseEvent e){}
-    public void mouseClicked (MouseEvent e){}
-    public void mouseEntered (MouseEvent e){}
-    public void mouseExited  (MouseEvent e){}
 
     public final void keyPressed(KeyEvent e)
     {

@@ -26,22 +26,6 @@ public class Player extends Sprite {
         moving = true;
     }
 
-    public void moveUPLT(int dy)
-    {
-        y -= dy;
-        x -= dy;
-        direction = UL;
-        moving = true;
-    }
-
-    public void moveUPRT(int dy)
-    {
-        y -= dy;
-        x += dy;
-        direction = UR;
-        moving = true;
-    }
-
     public void moveDN(int dy)
     {
         y += dy;
@@ -72,22 +56,19 @@ public class Player extends Sprite {
     public void handleRoomSwitch() {
         Room currRoom = MapGen.GetInstance().getRoomContainingPlayer();
 
-
-
-
-        if (y <= currRoom.y) { // TOP
+        if (y <= currRoom.getY()) { // TOP
             switchRoom(currRoom, 0, -offsetY, 2);
         }
 
-        if (y >= currRoom.y + offsetY) { // BOT
+        if (y >= currRoom.getY() + offsetY) { // BOT
             switchRoom(currRoom, 0, offsetY, 0);
         }
 
-        if (x <= currRoom.x) { // LEFT
+        if (x <= currRoom.getX()) { // LEFT
             switchRoom(currRoom, -offsetX, 0, 3);
         }
 
-        if (x >= currRoom.x + offsetX) { // RIGHT
+        if (x >= currRoom.getX() + offsetX) { // RIGHT
             switchRoom(currRoom, offsetX, 0, 1);
         }
 
@@ -98,18 +79,14 @@ public class Player extends Sprite {
     public void switchRoom(Room currRoom, int ox, int oy, int dir) {
         Room newRoom;
 
-        newRoom = MapGen.GetInstance().getRoom(currRoom.x + ox, currRoom.y + oy);
-        Camera.GetInstance().setPos(newRoom.x, newRoom.y);
+        newRoom = MapGen.GetInstance().getRoom(currRoom.getX() + ox, currRoom.getY() + oy);
+        Camera.GetInstance().setPos(newRoom.getX(), newRoom.getY());
 
         // centers the player on the spawn box
-        this.x = (newRoom.connectionSpawnPoints[dir].x) + ((96 - (size))/2);
-        this.y = (newRoom.connectionSpawnPoints[dir].y) + ((96 - (size))/2);
+        this.x = (newRoom.getEntryPoint(dir).x) + ((96 - (size))/2);
+        this.y = (newRoom.getEntryPoint(dir).y) + ((96 - (size))/2);
 
         MapGen.GetInstance().setRoomContainingPlayer(newRoom);
     }
-
-//    public void draw(Graphics g) {
-//        super.draw(g);
-//    }
 
 }

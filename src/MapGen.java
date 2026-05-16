@@ -16,6 +16,10 @@ public class MapGen {
 
     public int rw = 96 * 14;
     public int rh = 96 * 10;
+    private final int UP = 0;
+    private final int LEFT = 1;
+    private final int DOWN = 2;
+    private final int RIGHT = 3;
 
     public MapGen() {
         instance = this;
@@ -34,55 +38,53 @@ public class MapGen {
 
         while (rects.size() < maxRoom) {
             for (int i = 0; i < rects.size(); i++) {
-                System.out.println(rooms.size());
 
                 Rect curr = rects.get(i);
                 Room currRoom = rooms.get(i);
 
-                // randomize which direction to spawn a room
                 int dir = random.nextInt(4);
 
-                if (curr.dir[dir] == true && currRoom.adjRooms[dir] != null) { // already has a connection there
+                if (curr.dir[dir] == true && currRoom.hasAdjacentRoom(dir)) { // already has a connection there
                     continue;
                 }
 
-                Room newRoomToAdd = null;
+                Room newRoomToAdd;
 
                 // directions go counter-clockwise
-                if (dir == 0) { // TOP
+                if (dir == UP) { // TOP
                     if (roomAtPosition(rects.get(i).x, rects.get(i).y - 25)) {continue;}
-                    newRoomsOnMap.add(new Rect(curr.x, curr.y - 25, 25, 25, 2));
+                    newRoomsOnMap.add(new Rect(curr.x, curr.y - 25, 25, 25, DOWN));
 
-                    newRoomToAdd = new Room(currRoom.x, currRoom.y - rh, 2, currRoom);
-                    newRoomToAdd.getDoor(2).hasCollision = true;
+                    newRoomToAdd = new Room(currRoom.getX(), currRoom.getY() - rh, DOWN, currRoom);
+                    newRoomToAdd.getDoor(DOWN).hasCollision = true;
                     newRooms.add(newRoomToAdd);
 
-                } else if (dir == 1) { // LEFT
+                } else if (dir == LEFT) { // LEFT
                     if (roomAtPosition(rects.get(i).x - 25, rects.get(i).y)) {continue;}
                     newRoomsOnMap.add(new Rect(curr.x - 25, curr.y, 25, 25, 3));
 
-                    newRoomToAdd = new Room(currRoom.x - rw, currRoom.y, 3, currRoom);
+                    newRoomToAdd = new Room(currRoom.getX() - rw, currRoom.getY(), 3, currRoom);
                     newRoomToAdd.getDoor(3).hasCollision = true;
                     newRooms.add(newRoomToAdd);
-                } else if (dir == 2) { // BOTTOM
+                } else if (dir == DOWN) { // BOTTOM
                     if (roomAtPosition(rects.get(i).x, rects.get(i).y + 25)) {continue;}
                     newRoomsOnMap.add(new Rect(curr.x, curr.y + 25, 25, 25, 0));
 
-                    newRoomToAdd = new Room(currRoom.x, currRoom.y + rh, 0, currRoom);
+                    newRoomToAdd = new Room(currRoom.getX(), currRoom.getY() + rh, 0, currRoom);
                     newRoomToAdd.getDoor(0).hasCollision = true;
                     newRooms.add(newRoomToAdd);
                 } else { // RIGHT
                     if (roomAtPosition(rects.get(i).x + 25, rects.get(i).y)) {continue;}
                     newRoomsOnMap.add(new Rect(curr.x + 25, curr.y, 25, 25, 1));
 
-                    newRoomToAdd = new Room(currRoom.x + rw, currRoom.y, 1, currRoom);
+                    newRoomToAdd = new Room(currRoom.getX() + rw, currRoom.getY(), 1, currRoom);
                     newRoomToAdd.getDoor(1).hasCollision = true;
                     newRooms.add(newRoomToAdd);
                 }
 
                 curr.dir[dir] = true;
                 currRoom.getDoor(dir).hasCollision = true;
-                currRoom.adjRooms[dir] = newRoomToAdd;
+                currRoom.setAdjacentRoom(dir, newRoomToAdd);
 
                 // Check if processing all room results in max rooms
                 if (rects.size() + newRoomsOnMap.size() >= maxRoom) {
@@ -99,10 +101,10 @@ public class MapGen {
             int spawnEnemies = random.nextInt(2);
 
             if (spawnEnemies == 0) {
-                rooms.get(i).hasEnemies = true;
+                rooms.get(i).giveEnemies(true);
                 rooms.get(i).setRoomUncleared();
             } else {
-                rooms.get(i).hasEnemies = false;
+                rooms.get(i).giveEnemies(false);
                 rooms.get(i).setRoomCleared();
             }
 
@@ -119,10 +121,6 @@ public class MapGen {
     }
 
     public void drawRooms(Graphics g) {
-//        for (int i = 0; i < maxRoom; i++) {
-//            rooms.get(i).draw(g);
-//        }
-
         containingPlayer.draw(g);
     }
 
@@ -130,7 +128,7 @@ public class MapGen {
         for (int i = 0; i < rects.size(); i++) {
             g.setColor(Color.black);
 
-            if (rooms.get(i).hasEnemies) {
+            if (rooms.get(i).hasEnemies()) {
                 g.setColor(Color.red);
             }
 
@@ -153,22 +151,22 @@ public class MapGen {
             g.setColor(Color.GREEN);
 
             // top/bottom connection (has a room above it)
-            if (rects.get(i).dir[0] == true) {
+            if (rects.get(i).dir[UP] == true) {
                 g.fillRect((rects.get(i).x + 12), rects.get(i).y - 3, 1, 6);
             }
 
             // top/bottom connection (has a room below it)
-            if (rects.get(i).dir[2] == true) {
+            if (rects.get(i).dir[DOWN] == true) {
                 g.fillRect((rects.get(i).x + 12), (rects.get(i).y + 25) - 3, 1, 6);
             }
 
             // left/right connection (has a room to it's left)
-            if (rects.get(i).dir[1] == true) {
+            if (rects.get(i).dir[LEFT] == true) {
                 g.fillRect((rects.get(i).x - 3), (rects.get(i).y + 12), 6, 1);
             }
 
             // left/right connection (has a room to it's right)
-            if (rects.get(i).dir[3] == true) {
+            if (rects.get(i).dir[RIGHT] == true) {
                 g.fillRect(((rects.get(i).x + 25) - 3), (rects.get(i).y + 12), 6, 1);
             }
 
@@ -205,7 +203,7 @@ public class MapGen {
 
     public Room getRoom(int x, int y) {
         for (Room rm : rooms) {
-            if (rm.x == x && rm.y == y) {
+            if (rm.getX() == x && rm.getY() == y) {
                 return rm;
             }
         }

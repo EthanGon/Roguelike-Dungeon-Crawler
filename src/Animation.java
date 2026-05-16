@@ -48,9 +48,6 @@ public class Animation {
 
     public Image getImage(String filename)
     {
-        //new ImageIcon(getClass().getResource("room_art/room.png")).getImage();
-
-        return Toolkit.getDefaultToolkit().getImage(filename);
-       // return new ImageIcon(filename).getImage();
+        return new ImageIcon(filename).getImage();
     }
 }

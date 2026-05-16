@@ -16,7 +16,7 @@ public class Sprite extends Rect {
 
         for(int i = 0; i < animation.length; i++)
         {
-            animation[i] = new Animation(name + "_" + pose[i], 3, 10, "gif");
+            animation[i] = new Animation(name + "_" + pose[i], 3, 10, "png");
         }
 
 
@@ -60,9 +60,7 @@ public class Sprite extends Rect {
     public void goRT(int dx)
     {
         vx = dx;
-
         direction = RT;
-
         moving = true;
 
     }
@@ -70,36 +68,28 @@ public class Sprite extends Rect {
     public void moveUP(int dy)
     {
         y -= dy;
-
         direction = UP;
-
         moving = true;
     }
 
     public void moveDN(int dy)
     {
         y += dy;
-
         direction = DN;
-
         moving = true;
     }
 
     public void moveLT(int dx)
     {
         x -= dx;
-
         direction = LT;
-
         moving = true;
     }
 
     public void moveRT(int dx)
     {
         x += dx;
-
         direction = RT;
-
         moving = true;
 
     }
@@ -110,7 +100,7 @@ public class Sprite extends Rect {
         int cx = Camera.GetInstance().getX();;
         int cy = Camera.GetInstance().getY();
 
-       // g.fillRect(x - cx, y - cy, w, h);
+        //g.drawRect(x - cx, y - cy, w, h);
 
         if(moving)
         {
@@ -118,7 +108,7 @@ public class Sprite extends Rect {
         }
         else
         {
-            g.drawImage(animation[direction].stillImage(), x - cx, y - cy, w, h, null);
+            g.drawImage(animation[direction].stillImage(), x - cx , y - cy , w, h, null);
         }
 
 

@@ -11,31 +11,33 @@ public class Room {
     private Image northSouthDoorOn =    new ImageIcon(getClass().getResource("room_art/ns-blockade-on.png")).getImage();
     private Image eastWestDoorOn =      new ImageIcon(getClass().getResource("room_art/ew-blockade-on.png")).getImage();
 
+
+    private static int numRooms = 0;
+    private final int x;
+    private final int y;
     private int pixelSize = 96;
-    private boolean roomCleared;
+    private int roomNumber;
     private int rw = 96 * 14;
     private int rh = 96 * 10;
 
-    private Rect[] roomBounds = new Rect[8];
-    private Rect roomBox;
-    public boolean hasEnemies;
+    private boolean hasEnemies;
+    private boolean roomCleared;
 
-    public Room[] adjRooms = new Room[4];
+    private Room[] adjRooms = new Room[4];
     private Rect[] doorBounds = new Rect[4];
-    private Rect[] enemySpawnPoints;
-
-
-    int x;
-    int y;
-
-    public Rect[] connectionSpawnPoints = new Rect[4];
+    private Rect[] roomBounds = new Rect[8];
+    private Rect[] walkableSpace = new Rect[12 * 8];
+    private Rect[] connectionSpawnPoints = new Rect[4];
+    private Rect roomBox;
 
     public Room(int x, int y) {
         this.x = x;
         this.y = y;
         initRoomBounds();
         createRoomSwitchSpawns();
-
+        createWalkableGrid();
+        numRooms++;
+        roomNumber = numRooms;
     }
 
     public Room(int x, int y, int connection, Room cameFrom) {
@@ -44,7 +46,9 @@ public class Room {
         this.y = y;
         initRoomBounds();
         createRoomSwitchSpawns();
-
+        createWalkableGrid();
+        numRooms++;
+        roomNumber = numRooms;
     }
 
     public void createRoomSwitchSpawns() {
@@ -60,8 +64,41 @@ public class Room {
         }
     }
 
-    public void draw(Graphics g) {
+    public void createWalkableGrid() {
+        int xo = 96;
+        int yo = 96;
+        int size = walkableSpace.length;
+        int index = 0;
+        int countSwitch = 0;
 
+        int startX = x + 96;
+        int startY = y + 96;
+
+        for (int i = 0; i < size; i++) {
+            walkableSpace[index] = new Rect(startX, startY, 96,96);
+            walkableSpace[index].project = true;
+            startX += xo;
+            index++;
+            countSwitch++;
+
+            if (countSwitch >= 12) {
+                startX = x + 96;
+                startY += yo;
+                countSwitch = 0;
+            }
+
+        }
+    }
+
+    public void draw(Graphics g) {
+        drawRoom(g);
+        drawRoomBounds(g);
+        drawEntryPoints(g);
+        drawWalkableSpace(g);
+
+    }
+
+    private void drawRoom(Graphics g) {
         int cx = Camera.GetInstance().getX();
         int cy = Camera.GetInstance().getY();
 
@@ -79,14 +116,25 @@ public class Room {
             if (adjRooms[1] != null) {g.drawImage(eastWestDoorOff, x - cx, (y + 384) - cy, null);} // 3 EAST
             if (adjRooms[3] != null) {g.drawImage(eastWestDoorOff, (x + 1248) - cx, (y + 384) - cy, null);} // 1 WEST
         }
+    }
 
-        drawRoomBounds(g);
+    private void drawWalkableSpace(Graphics g) {
+        g.setColor(Color.lightGray);
 
+        int i = 0;
+        for (Rect r : walkableSpace) {
+            g.drawString("Room: #" + roomNumber, r.x - Camera.GetInstance().getX(), r.y - Camera.GetInstance().getY() + 12);
+            g.drawString("Tile: #" + i, r.x - Camera.GetInstance().getX(), r.y - Camera.GetInstance().getY() + 24);
+            r.draw(g);
+            i++;
+        }
+    }
+
+    private void drawEntryPoints(Graphics g) {
         g.setColor(Color.green);
         for (Rect spawn : connectionSpawnPoints) {
             spawn.draw(g);
         }
-
     }
 
     private void initRoomBounds() {
@@ -168,6 +216,35 @@ public class Room {
                 doorBounds[i].hasCollision = false;
             }
         }
+    }
+
+    public void giveEnemies(boolean value) {
+        if (value) {hasEnemies = true;}
+        else {hasEnemies = false;};
+    }
+
+    public boolean hasEnemies() {
+        return hasEnemies;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public Rect getEntryPoint(int index) {
+        return connectionSpawnPoints[index];
+    }
+
+    public boolean hasAdjacentRoom(int dir) {
+        return adjRooms[dir] != null;
+    }
+
+    public void setAdjacentRoom(int dir, Room rm) {
+        adjRooms[dir] = rm;
     }
 
 
