@@ -13,7 +13,7 @@ public abstract class GameBase extends Canvas implements Runnable, KeyListener {
     private int mapSizeY = 10;
     private int gw = pixelSize * mapSizeX;
     private int gh = pixelSize * mapSizeY;
-    private LevelMusic bgm = new LevelMusic("src/sfx/binding_of_isaac_track.wav");
+
 
     boolean[] pressing = new boolean[1024];
 
@@ -136,7 +136,7 @@ public abstract class GameBase extends Canvas implements Runnable, KeyListener {
         frame.setVisible(true);
 
 
-        bgm.loop();
+
 
         off_screen   = createImage(gw, gh);
         off_screen_g = off_screen.getGraphics();

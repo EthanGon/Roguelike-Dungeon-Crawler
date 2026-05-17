@@ -8,11 +8,16 @@ public class Player extends Sprite {
     private final static String[] pose = {"up", "dn", "lt", "rt"};
     int offsetX = MapGen.GetInstance().rw;
     int offsetY = MapGen.GetInstance().rh;
+    private Rect smallerBox;
 
     public Player(int x, int y, int dir, int size) {
         super("src/player_animation/p", x,y, size,size, dir, pose);
         this.project = true;
         instance = this;
+
+        int o = 10;
+        smallerBox = new Rect(x,y + (o/2), size, size);
+        smallerBox.project = true;
     }
 
     public static Player GetPlayer() {
@@ -51,10 +56,14 @@ public class Player extends Sprite {
         MapGen.GetInstance().getRoomContainingPlayer().checkColl();
         handleRoomSwitch();
 
+        smallerBox.x = x;
+        smallerBox.y = y;
+
     }
 
     public void handleRoomSwitch() {
         Room currRoom = MapGen.GetInstance().getRoomContainingPlayer();
+        currRoom.moveEnemies();
 
         if (y <= currRoom.getY()) { // TOP
             switchRoom(currRoom, 0, -offsetY, 2);
@@ -87,6 +96,14 @@ public class Player extends Sprite {
         this.y = (newRoom.getEntryPoint(dir).y) + ((96 - (size))/2);
 
         MapGen.GetInstance().setRoomContainingPlayer(newRoom);
+    }
+
+    public void drawSmallBox(Graphics g) {
+        smallerBox.draw(g);
+    }
+
+    public Rect getSmallerBox() {
+        return smallerBox;
     }
 
 }

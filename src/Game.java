@@ -1,17 +1,12 @@
 import java.awt.*;
 
 public class Game extends GameBase {
-//    private Camera mainCam = new Camera();
-//    private MapGen map = new MapGen();
-//    private Player p = new Player(GetGameWidth()/2 - (96/2),GetGameHeight()/2 - (96/2), Player.DN, 96);
-//    private Enemy test = new Enemy("src/enemy_art/bat/bat", (int) p.x, (int) p.y, 96, 96, Rect.DN);
-//    private int playerSpeed = 5;
+
     private Camera mainCam;
     private MapGen map;
     private Player p;
-    private Enemy test;
     private int playerSpeed;
-
+    private LevelMusic bgm;
 
     @Override
     public void start() {
@@ -19,25 +14,22 @@ public class Game extends GameBase {
         mainCam = new Camera();
         map = new MapGen();
         p = new Player(GetGameWidth()/2 - (96/2),GetGameHeight()/2 - (96/2), Player.DN, 96);
-        test = new Enemy("src/enemy_art/bat/bat", (int) p.x, (int) p.y, 96, 96, Rect.DN);
         playerSpeed = 5;
+        bgm = new LevelMusic("src/sfx/binding_of_isaac_track.wav");
+        bgm.loop();
     }
 
     public void inGameLoop() {
 
         handleInput();
-
         p.checkCollision();
-
-        test.chase(p);
 
     }
 
     public void paint(Graphics g) {
         map.draw(g);
         p.draw(g);
-        test.draw(g);
-
+        p.drawSmallBox(g);
         map.drawMiniMap(g);
     }
 

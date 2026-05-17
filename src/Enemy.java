@@ -4,8 +4,8 @@ public class Enemy extends Sprite {
     private int moveSpeed = 2;
     private boolean isDead = false;
 
-    public Enemy(String name, int x, int y, int w, int h, int direction) {
-        super(name, x, y, w, h, direction, pose);
+    public Enemy(String name, int x, int y) {
+        super(name, x, y, 96, 96, Sprite.DN, pose);
     }
 
     public void chase(Rect r) {
@@ -25,6 +25,14 @@ public class Enemy extends Sprite {
         if (y < r.y) {
             moveDN(moveSpeed);
         }
+    }
+
+    public void setDead() {
+        isDead = true;
+    }
+
+    public boolean isDead() {
+        return isDead;
     }
 
 

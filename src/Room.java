@@ -1,6 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-
+import java.util.ArrayList;
 
 
 public class Room {
@@ -28,6 +28,7 @@ public class Room {
     private Rect[] walkableSpace = new Rect[12 * 8];
     private Rect[] connectionSpawnPoints = new Rect[4];
     private Rect roomBox;
+    private ArrayList<Enemy> enemies = new ArrayList<>();
 
     public Room(int x, int y) {
         this.x = x;
@@ -89,7 +90,16 @@ public class Room {
         drawRoomBounds(g);
         drawEntryPoints(g);
         drawWalkableSpace(g);
+        drawEnemies(g);
 
+    }
+
+    public void drawEnemies(Graphics g) {
+        for (Enemy e : enemies) {
+            if (!e.isDead()) {
+                e.draw(g);
+            }
+        }
     }
 
     private void drawRoom(Graphics g) {
@@ -209,12 +219,34 @@ public class Room {
             if (adjRooms[i] != null) {
                 doorBounds[i].hasCollision = false;
             }
+
+        }
+
+        for (Enemy e : enemies) {
+            e.setDead();
         }
     }
 
+    public boolean isRoomCleared() {
+        return roomCleared;
+    }
+
     public void giveEnemies(boolean value) {
-        if (value) {hasEnemies = true;}
+        if (value) {
+            hasEnemies = true;
+            EnemySpawner.spawnEnemies(this);
+        }
         else {hasEnemies = false;};
+    }
+
+    public void moveEnemies() {
+
+
+        for (Enemy e : enemies) {
+            if (!e.isDead() && !e.overlaps(Player.GetPlayer().getSmallerBox())) {
+                e.chase(Player.GetPlayer());
+            }
+        }
     }
 
     public boolean hasEnemies() {
@@ -229,6 +261,14 @@ public class Room {
         return y;
     }
 
+    public Rect getTile(int index) {
+        return walkableSpace[index];
+    }
+
+    public int getNumTiles() {
+        return walkableSpace.length;
+    }
+
     public Rect getEntryPoint(int index) {
         return connectionSpawnPoints[index];
     }
@@ -239,6 +279,10 @@ public class Room {
 
     public void setAdjacentRoom(int dir, Room rm) {
         adjRooms[dir] = rm;
+    }
+
+    public void addEnemy(Enemy e) {
+        enemies.add(e);
     }
 
 

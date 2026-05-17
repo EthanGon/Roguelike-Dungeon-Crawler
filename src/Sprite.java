@@ -5,6 +5,7 @@ public class Sprite extends Rect {
     String name;
     boolean moving = false;
     boolean physics = false;
+    boolean alwaysMove = false;
     Animation[] animation = new Animation[4];
 
     public Sprite(String name, int x, int y, int w, int h, int direction, String[] pose)
@@ -111,7 +112,7 @@ public class Sprite extends Rect {
             g.drawImage(animation[direction].stillImage(), x - cx , y - cy , w, h, null);
         }
 
-
+        if (alwaysMove) return;
         moving = false;
     }
 

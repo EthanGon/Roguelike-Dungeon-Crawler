@@ -36,7 +36,6 @@ public class MapGen {
         rooms.add(new Room(0,0));
         containingPlayer = rooms.getFirst();
 
-
         while (rects.size() < maxRoom) {
             for (int i = 0; i < rects.size(); i++) {
 
@@ -98,7 +97,7 @@ public class MapGen {
         }
 
         // Decide if room should have enemies
-        for (int i = 0; i < rooms.size(); i++) {
+        for (int i = 1; i < rooms.size(); i++) {
             int spawnEnemies = chanceInt(85);
 
             if (spawnEnemies == 1) {
@@ -118,11 +117,11 @@ public class MapGen {
     }
 
     public void draw(Graphics g) {
-        drawRooms(g);
+        drawCurrentRoom(g);
 
     }
 
-    public void drawRooms(Graphics g) {
+    public void drawCurrentRoom(Graphics g) {
         containingPlayer.draw(g);
     }
 

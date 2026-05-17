@@ -4,7 +4,6 @@ public class GameSeed {
     private static int seed;
     private static Random random;
 
-
     public static void init(long seed) {
         random = new Random(seed);
     }
