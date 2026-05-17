@@ -1,35 +1,31 @@
 import java.awt.*;
 
 public class Game extends GameBase {
-    private Camera mainCam = new Camera();
-    private MapGen map = new MapGen();
-    private Player p = new Player(GetGameWidth()/2 - (96/2),GetGameHeight()/2 - (96/2), Player.DN, 96);
-    private Enemy test = new Enemy("src/enemy_art/bat/bat", (int) p.x, (int) p.y, 96, 96, Rect.DN);
-    private int playerSpeed = 5;
+//    private Camera mainCam = new Camera();
+//    private MapGen map = new MapGen();
+//    private Player p = new Player(GetGameWidth()/2 - (96/2),GetGameHeight()/2 - (96/2), Player.DN, 96);
+//    private Enemy test = new Enemy("src/enemy_art/bat/bat", (int) p.x, (int) p.y, 96, 96, Rect.DN);
+//    private int playerSpeed = 5;
+    private Camera mainCam;
+    private MapGen map;
+    private Player p;
+    private Enemy test;
+    private int playerSpeed;
 
+
+    @Override
+    public void start() {
+        GameSeed.init();
+        mainCam = new Camera();
+        map = new MapGen();
+        p = new Player(GetGameWidth()/2 - (96/2),GetGameHeight()/2 - (96/2), Player.DN, 96);
+        test = new Enemy("src/enemy_art/bat/bat", (int) p.x, (int) p.y, 96, 96, Rect.DN);
+        playerSpeed = 5;
+    }
 
     public void inGameLoop() {
 
-
-
-        if(pressing[_W])   p.goUP(playerSpeed);
-        else if(pressing[_S])   p.goDN(playerSpeed);
-        else if(pressing[_A])   p.goLT(playerSpeed);
-        else if(pressing[_D])   p.goRT(playerSpeed);
-        p.move();
-
-        if (pressing[_1]) {
-            map.toggleCurrentRoomState(true);
-        } else if (pressing[_2]) {
-            map.toggleCurrentRoomState(false);
-        }
-
-
-
-        handleShowingMiniMap();
-
-
-
+        handleInput();
 
         p.checkCollision();
 
@@ -42,18 +38,24 @@ public class Game extends GameBase {
         p.draw(g);
         test.draw(g);
 
-
         map.drawMiniMap(g);
     }
 
-    public void handleShowingMiniMap() {
-        if (pressing[_Q] && map.canSwitchMap) {
-            map.showMiniMap = !map.showMiniMap;
-            map.canSwitchMap = false;
+    public void handleInput() {
+        if(pressing[_W])   p.goUP(playerSpeed);
+        else if(pressing[_S])   p.goDN(playerSpeed);
+        else if(pressing[_A])   p.goLT(playerSpeed);
+        else if(pressing[_D])   p.goRT(playerSpeed);
+        p.move();
+
+        if (pressing[_1]) {
+            map.toggleCurrentRoomState(true);
+        } else if (pressing[_2]) {
+            map.toggleCurrentRoomState(false);
         }
 
-        if (!pressing[_Q]) {
-            map.canSwitchMap = true;
-        }
+        map.toggleMap(pressing[_Q]);
     }
+
+
 }

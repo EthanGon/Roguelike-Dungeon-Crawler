@@ -12,7 +12,7 @@ public class MapGen {
     private Queue<Room> newRooms = new LinkedList<>();
     private Room containingPlayer;
     private static MapGen instance;
-    private int maxRoom = 12;
+    private int maxRoom = 15;
 
     public int rw = 96 * 14;
     public int rh = 96 * 10;
@@ -20,8 +20,8 @@ public class MapGen {
     private final int LEFT = 1;
     private final int DOWN = 2;
     private final int RIGHT = 3;
-    public boolean showMiniMap = true;
-    public boolean canSwitchMap = true;
+    private boolean showMiniMap = true;
+    private boolean canSwitchMap = true;
 
     public MapGen() {
         instance = this;
@@ -35,7 +35,7 @@ public class MapGen {
         rects.add(new Rect(200, 200, 25, 25));
         rooms.add(new Room(0,0));
         containingPlayer = rooms.getFirst();
-        Random random = new Random();
+
 
         while (rects.size() < maxRoom) {
             for (int i = 0; i < rects.size(); i++) {
@@ -43,7 +43,7 @@ public class MapGen {
                 Rect curr = rects.get(i);
                 Room currRoom = rooms.get(i);
 
-                int dir = random.nextInt(4);
+                int dir = GameSeed.get().nextInt(4);
 
                 if (curr.dir[dir] == true && currRoom.hasAdjacentRoom(dir)) { // already has a connection there
                     continue;
@@ -99,9 +99,9 @@ public class MapGen {
 
         // Decide if room should have enemies
         for (int i = 0; i < rooms.size(); i++) {
-            int spawnEnemies = random.nextInt(2);
+            int spawnEnemies = chanceInt(85);
 
-            if (spawnEnemies == 0) {
+            if (spawnEnemies == 1) {
                 rooms.get(i).giveEnemies(true);
                 rooms.get(i).setRoomUncleared();
             } else {
@@ -131,8 +131,6 @@ public class MapGen {
             return;
         }
 
-        int ox = 3;
-        int oy = 3;
         int miniOffset = 10;
 
         g.setColor(new Color(0, 0, 0, 100));
@@ -155,8 +153,6 @@ public class MapGen {
 
             g.setColor(Color.WHITE);
             g.drawRect(rects.get(i).x, rects.get(i).y, rects.get(i).w, rects.get(i).h);
-
-
 
         }
 
@@ -296,6 +292,22 @@ public class MapGen {
 
         return h;
     }
+
+    public void toggleMap(boolean val) {
+        if (val && canSwitchMap) {
+            showMiniMap = !showMiniMap;
+            canSwitchMap = false;
+        }
+
+        if (!val) {
+            canSwitchMap = true;
+        }
+    }
+
+    public int chanceInt(int percent) {
+        return GameSeed.get().nextInt(100) < percent ? 1 : 0;
+    }
+
 
 
 

@@ -94,6 +94,8 @@ public abstract class GameBase extends Canvas implements Runnable, KeyListener {
 
     public final void run()
     {
+
+
         while(true)
         {
             inGameLoop();
@@ -109,7 +111,7 @@ public abstract class GameBase extends Canvas implements Runnable, KeyListener {
 
     }
 
-
+    public abstract void start();
     public abstract void inGameLoop();
 
     @Override
@@ -123,6 +125,7 @@ public abstract class GameBase extends Canvas implements Runnable, KeyListener {
 
     public final void init()
     {
+        start();
         this.setSize(gw, gh);
         JFrame frame = new JFrame("Roguelike Dungeon Crawler");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -140,6 +143,7 @@ public abstract class GameBase extends Canvas implements Runnable, KeyListener {
 
         this.requestFocus();
         this.addKeyListener(this);
+
 
         thread = new Thread(this);
         thread.start();
