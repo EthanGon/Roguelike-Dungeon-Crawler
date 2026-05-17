@@ -12,7 +12,7 @@ public class MapGen {
     private Queue<Room> newRooms = new LinkedList<>();
     private Room containingPlayer;
     private static MapGen instance;
-    private int maxRoom = 15;
+    private int maxRoom = 12;
 
     public int rw = 96 * 14;
     public int rh = 96 * 10;
@@ -22,17 +22,19 @@ public class MapGen {
     private final int RIGHT = 3;
     private boolean showMiniMap = true;
     private boolean canSwitchMap = true;
+    private int miniMapScale = 35; // keep between 20-35
 
     public MapGen() {
         instance = this;
         createRooms();
+        snapMiniMapToCorner();
     }
 
     public void createRooms() {
         long startTime = System.nanoTime();
 
         // creates the starting room
-        rects.add(new Rect(200, 200, 25, 25));
+        rects.add(new Rect(200, 200, miniMapScale, miniMapScale));
         rooms.add(new Room(0,0));
         containingPlayer = rooms.getFirst();
 
@@ -52,30 +54,30 @@ public class MapGen {
 
                 // directions go counter-clockwise
                 if (dir == UP) { // TOP
-                    if (roomAtPosition(rects.get(i).x, rects.get(i).y - 25)) {continue;}
-                    newRoomsOnMap.add(new Rect(curr.x, curr.y - 25, 25, 25, DOWN));
+                    if (roomAtPosition(rects.get(i).x, rects.get(i).y - miniMapScale)) {continue;}
+                    newRoomsOnMap.add(new Rect(curr.x, curr.y - miniMapScale, miniMapScale, miniMapScale, DOWN));
 
                     newRoomToAdd = new Room(currRoom.getX(), currRoom.getY() - rh, DOWN, currRoom);
                     newRoomToAdd.getDoor(DOWN).hasCollision = true;
                     newRooms.add(newRoomToAdd);
 
                 } else if (dir == LEFT) { // LEFT
-                    if (roomAtPosition(rects.get(i).x - 25, rects.get(i).y)) {continue;}
-                    newRoomsOnMap.add(new Rect(curr.x - 25, curr.y, 25, 25, 3));
+                    if (roomAtPosition(rects.get(i).x - miniMapScale, rects.get(i).y)) {continue;}
+                    newRoomsOnMap.add(new Rect(curr.x - miniMapScale, curr.y, miniMapScale, miniMapScale, 3));
 
                     newRoomToAdd = new Room(currRoom.getX() - rw, currRoom.getY(), 3, currRoom);
                     newRoomToAdd.getDoor(3).hasCollision = true;
                     newRooms.add(newRoomToAdd);
                 } else if (dir == DOWN) { // BOTTOM
-                    if (roomAtPosition(rects.get(i).x, rects.get(i).y + 25)) {continue;}
-                    newRoomsOnMap.add(new Rect(curr.x, curr.y + 25, 25, 25, 0));
+                    if (roomAtPosition(rects.get(i).x, rects.get(i).y + miniMapScale)) {continue;}
+                    newRoomsOnMap.add(new Rect(curr.x, curr.y + miniMapScale, miniMapScale, miniMapScale, 0));
 
                     newRoomToAdd = new Room(currRoom.getX(), currRoom.getY() + rh, 0, currRoom);
                     newRoomToAdd.getDoor(0).hasCollision = true;
                     newRooms.add(newRoomToAdd);
                 } else { // RIGHT
-                    if (roomAtPosition(rects.get(i).x + 25, rects.get(i).y)) {continue;}
-                    newRoomsOnMap.add(new Rect(curr.x + 25, curr.y, 25, 25, 1));
+                    if (roomAtPosition(rects.get(i).x + miniMapScale, rects.get(i).y)) {continue;}
+                    newRoomsOnMap.add(new Rect(curr.x + miniMapScale, curr.y, miniMapScale, miniMapScale, 1));
 
                     newRoomToAdd = new Room(currRoom.getX() + rw, currRoom.getY(), 1, currRoom);
                     newRoomToAdd.getDoor(1).hasCollision = true;
@@ -170,7 +172,7 @@ public class MapGen {
 
             // top/bottom connection (has a room below it)
             if (rects.get(i).dir[DOWN] == true) {
-                g.fillRect((rects.get(i).x + 12), (rects.get(i).y + 25) - 3, 1, 6);
+                g.fillRect((rects.get(i).x + 12), (rects.get(i).y + miniMapScale) - 3, 1, 6);
             }
 
             // left/right connection (has a room to it's left)
@@ -180,7 +182,7 @@ public class MapGen {
 
             // left/right connection (has a room to it's right)
             if (rects.get(i).dir[RIGHT] == true) {
-                g.fillRect(((rects.get(i).x + 25) - 3), (rects.get(i).y + 12), 6, 1);
+                g.fillRect(((rects.get(i).x + miniMapScale) - 3), (rects.get(i).y + 12), 6, 1);
             }
 
         }
@@ -226,8 +228,6 @@ public class MapGen {
 
     public void setRoomContainingPlayer(Room rm) {
         containingPlayer = rm;
-
-        // TODO: rm.spawnEnemies if hasEnemies && notCleared
     }
 
     public Room getRoomContainingPlayer() {
@@ -300,6 +300,20 @@ public class MapGen {
 
         if (!val) {
             canSwitchMap = true;
+        }
+    }
+
+    public void snapMiniMapToCorner() {
+        while (highestRoomX() != rw - 10) {
+            for (Rect r : rects) {
+                r.x += 1;
+            }
+        }
+
+        while (lowestRoomY() != 10) {
+            for (Rect r : rects) {
+                r.y -= 1;
+            }
         }
     }
 

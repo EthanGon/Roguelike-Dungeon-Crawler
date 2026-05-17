@@ -7,6 +7,7 @@ public class Game extends GameBase {
     private Player p;
     private int playerSpeed;
     private LevelMusic bgm;
+    private Hud ui;
 
     @Override
     public void start() {
@@ -17,12 +18,13 @@ public class Game extends GameBase {
         playerSpeed = 5;
         bgm = new LevelMusic("src/sfx/binding_of_isaac_track.wav");
         bgm.loop();
+        ui = new Hud();
     }
 
     public void inGameLoop() {
 
         handleInput();
-        p.checkCollision();
+        p.update();
 
     }
 
@@ -31,6 +33,7 @@ public class Game extends GameBase {
         p.draw(g);
         p.drawSmallBox(g);
         map.drawMiniMap(g);
+        ui.draw(g);
     }
 
     public void handleInput() {
@@ -47,6 +50,15 @@ public class Game extends GameBase {
         }
 
         map.toggleMap(pressing[_Q]);
+
+        if (pressing[_9] ) {
+            p.increaseCurrentHP();
+        }
+
+        if (pressing[_8]) {
+            p.takeDamage();
+            System.out.println(p.getCurrentHP());
+        }
     }
 
 

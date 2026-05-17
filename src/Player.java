@@ -9,15 +9,30 @@ public class Player extends Sprite {
     int offsetX = MapGen.GetInstance().rw;
     int offsetY = MapGen.GetInstance().rh;
     private Rect smallerBox;
+    private int smallBoxOffset = 85;
+    private int health = 12;
+    private int maxHeath = 12;
+    private int iframeTime = 2;
+    private int iframeTimer = 0;
+    private boolean canTakeDamage = true;
 
     public Player(int x, int y, int dir, int size) {
         super("src/player_animation/p", x,y, size,size, dir, pose);
         this.project = true;
         instance = this;
+        health = maxHeath;
 
-        int o = 10;
-        smallerBox = new Rect(x,y + (o/2), size, size);
+        smallerBox = new Rect(x,y, size - smallBoxOffset, size - smallBoxOffset);
         smallerBox.project = true;
+    }
+
+    public void update() {
+        checkCollision();
+        handleSmallBox();
+
+        if (!canTakeDamage) {
+            handleInvulFrame();
+        }
     }
 
     public static Player GetPlayer() {
@@ -55,10 +70,11 @@ public class Player extends Sprite {
     public void checkCollision() {
         MapGen.GetInstance().getRoomContainingPlayer().checkColl();
         handleRoomSwitch();
+    }
 
-        smallerBox.x = x;
-        smallerBox.y = y;
-
+    public void handleSmallBox() {
+        smallerBox.x = x + (smallBoxOffset/2);
+        smallerBox.y = y + (smallBoxOffset/2);
     }
 
     public void handleRoomSwitch() {
@@ -104,6 +120,49 @@ public class Player extends Sprite {
 
     public Rect getSmallerBox() {
         return smallerBox;
+    }
+
+    public int getCurrentHP() {
+        return health;
+    }
+
+    public int getMaxHeath() {
+        return maxHeath;
+    }
+
+    public void increaseCurrentHP() {
+        if (getCurrentHP() < maxHeath) {
+            health++;
+        }
+    }
+
+    public void decreaseCurrentHP() {
+        if (getCurrentHP() > 0) {
+            health--;
+        }
+    }
+
+    public void takeDamage() {
+        if (canTakeDamage) {
+            startInvulFrame();
+            decreaseCurrentHP();
+        }
+    }
+
+    public void startInvulFrame() {
+        canTakeDamage = false;
+    }
+
+    public void handleInvulFrame() {
+        if (iframeTimer >= (57 * iframeTime)) {
+            canTakeDamage = true;
+            iframeTimer = 0;
+        }
+        iframeTimer++;
+    }
+
+    public boolean canTakeDamage() {
+        return canTakeDamage;
     }
 
 }

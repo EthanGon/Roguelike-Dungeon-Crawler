@@ -26,7 +26,7 @@ public class Room {
     private Rect[] doorBounds = new Rect[4];
     private Rect[] roomBounds = new Rect[8];
     private Rect[] walkableSpace = new Rect[12 * 8];
-    private Rect[] connectionSpawnPoints = new Rect[4];
+    private Rect[] entryPoints = new Rect[4];
     private Rect roomBox;
     private ArrayList<Enemy> enemies = new ArrayList<>();
 
@@ -49,12 +49,12 @@ public class Room {
     public void createRoomSwitchSpawns() {
 
         // Counter Clockwise (N,W,S,E)
-        connectionSpawnPoints[0] = new Rect(x + (96 * 6) + 48, y + 96, 96, 96);
-        connectionSpawnPoints[1] = new Rect(x + 96, y + (96 * 4) + 48, 96, 96);
-        connectionSpawnPoints[2] = new Rect(x + (96 * 6) + 48, y + (96 * 8), 96, 96);
-        connectionSpawnPoints[3] = new Rect(x + (96 * 12), y + (96 * 4) + 48, 96, 96);
+        entryPoints[0] = new Rect(x + (96 * 6) + 48, y + 96, 96, 96);
+        entryPoints[1] = new Rect(x + 96, y + (96 * 4) + 48, 96, 96);
+        entryPoints[2] = new Rect(x + (96 * 6) + 48, y + (96 * 8), 96, 96);
+        entryPoints[3] = new Rect(x + (96 * 12), y + (96 * 4) + 48, 96, 96);
 
-        for (Rect b : connectionSpawnPoints) {
+        for (Rect b : entryPoints) {
             b.project = true;
         }
     }
@@ -136,7 +136,7 @@ public class Room {
 
     private void drawEntryPoints(Graphics g) {
         g.setColor(Color.green);
-        for (Rect spawn : connectionSpawnPoints) {
+        for (Rect spawn : entryPoints) {
             spawn.draw(g);
         }
     }
@@ -270,7 +270,7 @@ public class Room {
     }
 
     public Rect getEntryPoint(int index) {
-        return connectionSpawnPoints[index];
+        return entryPoints[index];
     }
 
     public boolean hasAdjacentRoom(int dir) {
