@@ -36,34 +36,30 @@ public class Game extends GameBase {
     }
 
     public void handleInput() {
+        movePlayer();
+        useWeapon();
+        toggleMap();
+
+    }
+
+    public void movePlayer() {
         if(pressing[_W])   p.goUP(playerSpeed);
         else if(pressing[_S])   p.goDN(playerSpeed);
         else if(pressing[_A])   p.goLT(playerSpeed);
         else if(pressing[_D])   p.goRT(playerSpeed);
         p.move();
+    }
 
-        if (pressing[_1]) {
-            map.toggleCurrentRoomState(true);
-        } else if (pressing[_2]) {
-            map.toggleCurrentRoomState(false);
-        }
-
-        map.toggleMap(pressing[_Q]);
-
-        if (pressing[_9] ) {
-            p.increaseCurrentHP();
-        }
-
-        if (pressing[_8]) {
-            p.takeDamage();
-            System.out.println(p.getCurrentHP());
-        }
-
+    public void useWeapon() {
         if (pressing[SPACE]) {
             p.useWeapon();
         } else {
             p.hideWeapon();
         }
+    }
+
+    public void toggleMap() {
+        map.toggleMap(pressing[_Q]);
     }
 
 
