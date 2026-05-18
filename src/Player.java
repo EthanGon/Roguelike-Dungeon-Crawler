@@ -11,7 +11,7 @@ public class Player extends Sprite {
     private Rect smallerBox;
     private int smallBoxOffset = 85;
     private int health;
-    private int maxHeath = 6;
+    private int maxHeath = 12;
     private int iframeTime = 2;
     private int iframeTimer = 0;
     private boolean canTakeDamage = true;
@@ -78,6 +78,8 @@ public class Player extends Sprite {
         smallerBox.x = x + (smallBoxOffset/2);
         smallerBox.y = y + (smallBoxOffset/2);
     }
+
+
 
     public void handleRoomSwitch() {
         Room currRoom = MapGen.GetInstance().getRoomContainingPlayer();
@@ -190,6 +192,10 @@ public class Player extends Sprite {
 
     public void hideWeapon() {
         wpn.setInactive();
+    }
+
+    public Rect getWeapon() {
+        return this.wpn;
     }
 
 }

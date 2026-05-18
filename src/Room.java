@@ -29,6 +29,7 @@ public class Room {
     private Rect[] entryPoints = new Rect[4];
     private Rect roomBox;
     private ArrayList<Enemy> enemies = new ArrayList<>();
+    private int enemiesDead = 0;
 
     public Room(int x, int y) {
         this.x = x;
@@ -96,7 +97,7 @@ public class Room {
 
     public void drawEnemies(Graphics g) {
         for (Enemy e : enemies) {
-            if (!e.isDead()) {
+            if (e.isDead()) {
                 e.draw(g);
             }
         }
@@ -196,6 +197,21 @@ public class Room {
                doorBounds[i].pushes(Player.GetPlayer());
            }
        }
+
+
+       if (enemiesDead == enemies.size()) {return;};
+       for (Enemy e : enemies) {
+           if (e.isDead() && e.overlaps(Player.GetPlayer().getWeapon())) {
+               e.setDead();
+               enemiesDead++;
+
+               if (enemiesDead == enemies.size()) {
+                   setRoomCleared();
+               }
+           }
+       }
+
+
    }
 
    public Rect getDoor(int index) {
@@ -240,10 +256,8 @@ public class Room {
     }
 
     public void moveEnemies() {
-
-
         for (Enemy e : enemies) {
-            if (!e.isDead() && !e.overlaps(Player.GetPlayer().getSmallerBox())) {
+            if (e.isDead() && !e.overlaps(Player.GetPlayer().getSmallerBox())) {
                 e.chase(Player.GetPlayer());
             }
         }

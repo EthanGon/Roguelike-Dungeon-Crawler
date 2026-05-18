@@ -9,7 +9,7 @@ public class Weapon extends Rect {
 
     public Weapon(int x, int y, int w, int h) {
         super(x, y, w, h);
-        this.project = false;
+        this.project = true;
         loadImages();
     }
 
@@ -34,12 +34,15 @@ public class Weapon extends Rect {
     public void draw(Graphics g) {
         int offset = 15;
 
+        int cx = Camera.GetInstance().getX();
+        int cy = Camera.GetInstance().getY();
+
         g.setColor(Color.blue);
-        g.drawRect(x, y, w, h);
-        if (Player.GetPlayer().getDir() == UP) {g.drawImage(weaponDirection[Player.GetPlayer().getDir()], Player.GetPlayer().x, (Player.GetPlayer().y - 96) + offset, null);}
-        if (Player.GetPlayer().getDir() == DN) {g.drawImage(weaponDirection[Player.GetPlayer().getDir()], Player.GetPlayer().x, (Player.GetPlayer().y + 96) - offset, null);}
-        if (Player.GetPlayer().getDir() == LT) {g.drawImage(weaponDirection[Player.GetPlayer().getDir()], (Player.GetPlayer().x - 96) + offset, Player.GetPlayer().y, null);}
-        if (Player.GetPlayer().getDir() == RT) {g.drawImage(weaponDirection[Player.GetPlayer().getDir()], (Player.GetPlayer().x + 96) - offset, Player.GetPlayer().y, null);}
+        g.drawRect(x - cx, y - cy, w, h);
+        if (Player.GetPlayer().getDir() == UP) {g.drawImage(weaponDirection[Player.GetPlayer().getDir()], (Player.GetPlayer().x)-cx, ((Player.GetPlayer().y - 96) + offset)-cy, null);}
+        if (Player.GetPlayer().getDir() == DN) {g.drawImage(weaponDirection[Player.GetPlayer().getDir()], (Player.GetPlayer().x)-cx, ((Player.GetPlayer().y + 96) - offset)-cy, null);}
+        if (Player.GetPlayer().getDir() == LT) {g.drawImage(weaponDirection[Player.GetPlayer().getDir()], ((Player.GetPlayer().x - 96) + offset)-cx, (Player.GetPlayer().y)-cy, null);}
+        if (Player.GetPlayer().getDir() == RT) {g.drawImage(weaponDirection[Player.GetPlayer().getDir()], ((Player.GetPlayer().x + 96) - offset)-cx, (Player.GetPlayer().y)-cy, null);}
     }
 
     public void setPosition() {
@@ -62,6 +65,7 @@ public class Weapon extends Rect {
             this.w = 96;
             this.y = y + (collOffset/2);
         }
+
     }
 
     public void setPosition(int dx, int dy) {

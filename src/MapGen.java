@@ -163,26 +163,26 @@ public class MapGen {
             g.drawString(i + "", rects.get(i).x, rects.get(i).y + rects.get(i).h / 2);
 
             // draw connections
-            g.setColor(Color.GREEN);
+            g.setColor(Color.YELLOW);
 
             // top/bottom connection (has a room above it)
             if (rects.get(i).dir[UP] == true) {
-                g.fillRect((rects.get(i).x + 12), rects.get(i).y - 3, 1, 6);
+                g.fillRect((rects.get(i).x + miniMapScale/2), rects.get(i).y - 3, 1, 6);
             }
 
             // top/bottom connection (has a room below it)
             if (rects.get(i).dir[DOWN] == true) {
-                g.fillRect((rects.get(i).x + 12), (rects.get(i).y + miniMapScale) - 3, 1, 6);
+                g.fillRect((rects.get(i).x + miniMapScale/2), (rects.get(i).y + miniMapScale) - 3, 1, 6);
             }
 
             // left/right connection (has a room to it's left)
             if (rects.get(i).dir[LEFT] == true) {
-                g.fillRect((rects.get(i).x - 3), (rects.get(i).y + 12), 6, 1);
+                g.fillRect((rects.get(i).x - 3), (rects.get(i).y + miniMapScale/2), 6, 1);
             }
 
             // left/right connection (has a room to it's right)
             if (rects.get(i).dir[RIGHT] == true) {
-                g.fillRect(((rects.get(i).x + miniMapScale) - 3), (rects.get(i).y + 12), 6, 1);
+                g.fillRect(((rects.get(i).x + miniMapScale) - 3), (rects.get(i).y + miniMapScale/2), 6, 1);
             }
 
         }
