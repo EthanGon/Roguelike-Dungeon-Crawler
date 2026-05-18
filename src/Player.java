@@ -10,11 +10,12 @@ public class Player extends Sprite {
     int offsetY = MapGen.GetInstance().rh;
     private Rect smallerBox;
     private int smallBoxOffset = 85;
-    private int health = 12;
-    private int maxHeath = 12;
+    private int health;
+    private int maxHeath = 6;
     private int iframeTime = 2;
     private int iframeTimer = 0;
     private boolean canTakeDamage = true;
+    private Weapon wpn;
 
     public Player(int x, int y, int dir, int size) {
         super("src/player_animation/p", x,y, size,size, dir, pose);
@@ -23,6 +24,7 @@ public class Player extends Sprite {
         health = maxHeath;
 
         smallerBox = new Rect(x,y, size - smallBoxOffset, size - smallBoxOffset);
+        wpn = new Weapon(x,y, size, size);
         smallerBox.project = true;
     }
 
@@ -114,6 +116,17 @@ public class Player extends Sprite {
         MapGen.GetInstance().setRoomContainingPlayer(newRoom);
     }
 
+    public void draw(Graphics g) {
+        if (wpn.isActive()) {
+            wpn.draw(g);
+        }
+
+        super.draw(g);
+        drawSmallBox(g);
+
+
+    }
+
     public void drawSmallBox(Graphics g) {
         smallerBox.draw(g);
     }
@@ -163,6 +176,20 @@ public class Player extends Sprite {
 
     public boolean canTakeDamage() {
         return canTakeDamage;
+    }
+
+    public int getDir() {
+        return direction;
+    }
+
+    public void useWeapon() {
+        wpn.setDir(this.direction);
+        wpn.setPosition();
+        wpn.setActive();
+    }
+
+    public void hideWeapon() {
+        wpn.setInactive();
     }
 
 }

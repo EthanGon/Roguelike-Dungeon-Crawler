@@ -101,7 +101,6 @@ public class Sprite extends Rect {
         int cx = Camera.GetInstance().getX();;
         int cy = Camera.GetInstance().getY();
 
-        //g.drawRect(x - cx, y - cy, w, h);
 
         if(moving)
         {

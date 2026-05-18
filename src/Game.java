@@ -31,7 +31,6 @@ public class Game extends GameBase {
     public void paint(Graphics g) {
         map.draw(g);
         p.draw(g);
-        p.drawSmallBox(g);
         map.drawMiniMap(g);
         ui.draw(g);
     }
@@ -58,6 +57,12 @@ public class Game extends GameBase {
         if (pressing[_8]) {
             p.takeDamage();
             System.out.println(p.getCurrentHP());
+        }
+
+        if (pressing[SPACE]) {
+            p.useWeapon();
+        } else {
+            p.hideWeapon();
         }
     }
 
