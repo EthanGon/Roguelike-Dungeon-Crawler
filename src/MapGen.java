@@ -2,7 +2,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Random;
 
 
 public class MapGen {
@@ -12,7 +11,7 @@ public class MapGen {
     private Queue<Room> newRooms = new LinkedList<>();
     private Room containingPlayer;
     private static MapGen instance;
-    private int maxRoom = 12;
+    private int maxRoom = 15;
 
     public int rw = 96 * 14;
     public int rh = 96 * 10;
@@ -28,6 +27,7 @@ public class MapGen {
         instance = this;
         createRooms();
         snapMiniMapToCorner();
+        setBossRoom();
     }
 
     public void createRooms() {
@@ -146,6 +146,10 @@ public class MapGen {
                 g.setColor(Color.red);
             }
 
+            if (rooms.get(i).hasBoss()) {
+                g.setColor(Color.magenta);
+            }
+
             if (rooms.get(i) == containingPlayer) {
                 g.setColor(Color.blue);
             }
@@ -165,24 +169,25 @@ public class MapGen {
             // draw connections
             g.setColor(Color.YELLOW);
 
+
             // top/bottom connection (has a room above it)
             if (rects.get(i).dir[UP] == true) {
-                g.fillRect((rects.get(i).x + miniMapScale/2), rects.get(i).y - 3, 1, 6);
+                g.fillRect((rects.get(i).x + miniMapScale/2), rects.get(i).y - 3, 5, 6);
             }
 
             // top/bottom connection (has a room below it)
             if (rects.get(i).dir[DOWN] == true) {
-                g.fillRect((rects.get(i).x + miniMapScale/2), (rects.get(i).y + miniMapScale) - 3, 1, 6);
+                g.fillRect((rects.get(i).x + miniMapScale/2), (rects.get(i).y + miniMapScale) - 3, 5, 6);
             }
 
             // left/right connection (has a room to it's left)
             if (rects.get(i).dir[LEFT] == true) {
-                g.fillRect((rects.get(i).x - 3), (rects.get(i).y + miniMapScale/2), 6, 1);
+                g.fillRect((rects.get(i).x - 3), (rects.get(i).y + miniMapScale/2), 6, 5);
             }
 
             // left/right connection (has a room to it's right)
             if (rects.get(i).dir[RIGHT] == true) {
-                g.fillRect(((rects.get(i).x + miniMapScale) - 3), (rects.get(i).y + miniMapScale/2), 6, 1);
+                g.fillRect(((rects.get(i).x + miniMapScale) - 3), (rects.get(i).y + miniMapScale/2), 6, 5);
             }
 
         }
@@ -319,6 +324,39 @@ public class MapGen {
 
     public int chanceInt(int percent) {
         return GameSeed.get().nextInt(100) < percent ? 1 : 0;
+    }
+
+
+    // Sets the boss rooms to be the fartest room that has one door
+    public void setBossRoom() {
+        Room fartest = roomsWithOneDoor().getFirst();
+        double d = distanceBetweenRooms(rooms.getFirst(), fartest);
+
+        for (int i = 0; i < roomsWithOneDoor().size(); i++) {
+            if (distanceBetweenRooms(rooms.getFirst(), roomsWithOneDoor().get(i)) > d) {
+                fartest = roomsWithOneDoor().get(i);
+            }
+        }
+
+        fartest.giveBoss();
+    }
+
+
+    // finds all the rooms with one door
+    public ArrayList<Room> roomsWithOneDoor() {
+        ArrayList<Room> rms = new ArrayList<>();
+
+        for (Room r : rooms) {
+            if (r.numConnections() == 1) {
+                rms.add(r);
+            }
+        }
+
+        return rms;
+    }
+
+    public double distanceBetweenRooms(Room rm1, Room rm2) {
+        return MyMath.distance(rm1.getX(), rm1.getY(), rm2.getX(), rm2.getY());
     }
 
 

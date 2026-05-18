@@ -18,6 +18,7 @@ public class Room {
     private int roomNumber;
     private int rw = 96 * 14;
     private int rh = 96 * 10;
+    private boolean hasBoss;
 
     private boolean hasEnemies;
     private boolean roomCleared;
@@ -297,6 +298,30 @@ public class Room {
 
     public void addEnemy(Enemy e) {
         enemies.add(e);
+    }
+
+    public boolean hasBoss() {
+        return hasBoss;
+    }
+
+    public void giveBoss() {
+        hasBoss = true;
+    }
+
+    public int numConnections() {
+        int i = 0;
+
+        for (Room r : adjRooms) {
+            if (r != null) {
+                i++;
+            }
+        }
+
+        return i;
+    }
+
+    public int getRoomNumber() {
+        return roomNumber;
     }
 
 
