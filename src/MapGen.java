@@ -11,7 +11,7 @@ public class MapGen {
     private Queue<Room> newRooms = new LinkedList<>();
     private Room containingPlayer;
     private static MapGen instance;
-    private int maxRoom = 15;
+    private int maxRoom = 10;
 
     public int rw = 96 * 14;
     public int rh = 96 * 10;
@@ -28,6 +28,8 @@ public class MapGen {
         createRooms();
         snapMiniMapToCorner();
         setBossRoom();
+        setConditionForUnlockingBoss();
+        System.out.println("Needed Rooms to clear: " + LevelLogic.getRoomsNeededCleared());
     }
 
     public void createRooms() {
@@ -63,24 +65,24 @@ public class MapGen {
 
                 } else if (dir == LEFT) { // LEFT
                     if (roomAtPosition(rects.get(i).x - miniMapScale, rects.get(i).y)) {continue;}
-                    newRoomsOnMap.add(new Rect(curr.x - miniMapScale, curr.y, miniMapScale, miniMapScale, 3));
+                    newRoomsOnMap.add(new Rect(curr.x - miniMapScale, curr.y, miniMapScale, miniMapScale, RIGHT));
 
-                    newRoomToAdd = new Room(currRoom.getX() - rw, currRoom.getY(), 3, currRoom);
-                    newRoomToAdd.getDoor(3).hasCollision = true;
+                    newRoomToAdd = new Room(currRoom.getX() - rw, currRoom.getY(), RIGHT, currRoom);
+                    newRoomToAdd.getDoor(RIGHT).hasCollision = true;
                     newRooms.add(newRoomToAdd);
                 } else if (dir == DOWN) { // BOTTOM
                     if (roomAtPosition(rects.get(i).x, rects.get(i).y + miniMapScale)) {continue;}
-                    newRoomsOnMap.add(new Rect(curr.x, curr.y + miniMapScale, miniMapScale, miniMapScale, 0));
+                    newRoomsOnMap.add(new Rect(curr.x, curr.y + miniMapScale, miniMapScale, miniMapScale, UP));
 
-                    newRoomToAdd = new Room(currRoom.getX(), currRoom.getY() + rh, 0, currRoom);
-                    newRoomToAdd.getDoor(0).hasCollision = true;
+                    newRoomToAdd = new Room(currRoom.getX(), currRoom.getY() + rh, UP, currRoom);
+                    newRoomToAdd.getDoor(UP).hasCollision = true;
                     newRooms.add(newRoomToAdd);
                 } else { // RIGHT
                     if (roomAtPosition(rects.get(i).x + miniMapScale, rects.get(i).y)) {continue;}
-                    newRoomsOnMap.add(new Rect(curr.x + miniMapScale, curr.y, miniMapScale, miniMapScale, 1));
+                    newRoomsOnMap.add(new Rect(curr.x + miniMapScale, curr.y, miniMapScale, miniMapScale, LEFT));
 
-                    newRoomToAdd = new Room(currRoom.getX() + rw, currRoom.getY(), 1, currRoom);
-                    newRoomToAdd.getDoor(1).hasCollision = true;
+                    newRoomToAdd = new Room(currRoom.getX() + rw, currRoom.getY(), LEFT, currRoom);
+                    newRoomToAdd.getDoor(LEFT).hasCollision = true;
                     newRooms.add(newRoomToAdd);
                 }
 
@@ -120,7 +122,6 @@ public class MapGen {
 
     public void draw(Graphics g) {
         drawCurrentRoom(g);
-
     }
 
     public void drawCurrentRoom(Graphics g) {
@@ -201,10 +202,6 @@ public class MapGen {
         newRooms.clear();
     }
 
-    // lazy check for if a room exist at a pos
-    /* Checking if a room already exist in a certain position or will exist in a certain position
-    Could probably replace this logic with a hashmap but I'm lazy rn
-    * */
     public boolean roomAtPosition(int x, int y) {
         for (Rect rect : rects) {
             if (rect.x == x && rect.y == y) {
@@ -326,7 +323,6 @@ public class MapGen {
         return GameSeed.get().nextInt(100) < percent ? 1 : 0;
     }
 
-
     // Sets the boss rooms to be the fartest room that has one door
     public void setBossRoom() {
         Room fartest = roomsWithOneDoor().getFirst();
@@ -338,7 +334,9 @@ public class MapGen {
             }
         }
 
+
         fartest.giveBoss();
+        Room.findBossDoor().hasCollision = true;
     }
 
 
@@ -357,6 +355,14 @@ public class MapGen {
 
     public double distanceBetweenRooms(Room rm1, Room rm2) {
         return MyMath.distance(rm1.getX(), rm1.getY(), rm2.getX(), rm2.getY());
+    }
+
+    public void setConditionForUnlockingBoss() {
+        for (Room r : rooms) {
+            if (!r.hasBoss() && r != rooms.getFirst() && r.hasEnemies()) {
+                LevelLogic.increaseNeededClears();
+            }
+        }
     }
 
 

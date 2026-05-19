@@ -34,7 +34,6 @@ public class LevelMusic {
             FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
             gainControl.setValue(-50.0f);
 
-
             clip.setFramePosition(0);
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         }

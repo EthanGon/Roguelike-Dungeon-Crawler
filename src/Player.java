@@ -11,10 +11,12 @@ public class Player extends Sprite {
     private Rect smallerBox;
     private int smallBoxOffset = 85;
     private int health;
-    private int maxHeath = 12;
+    private int maxHeath = 6;
     private int iframeTime = 2;
     private int iframeTimer = 0;
     private boolean canTakeDamage = true;
+    private boolean isAlive = true;
+    public boolean canUseWpn = true;
     private Weapon wpn;
 
     public Player(int x, int y, int dir, int size) {
@@ -35,6 +37,7 @@ public class Player extends Sprite {
         if (!canTakeDamage) {
             handleInvulFrame();
         }
+
     }
 
     public static Player GetPlayer() {
@@ -101,8 +104,6 @@ public class Player extends Sprite {
             switchRoom(currRoom, offsetX, 0, 1);
         }
 
-
-
     }
 
     public void switchRoom(Room currRoom, int ox, int oy, int dir) {
@@ -119,12 +120,15 @@ public class Player extends Sprite {
     }
 
     public void draw(Graphics g) {
-        if (wpn.isActive()) {
-            wpn.draw(g);
-        }
 
-        super.draw(g);
-        drawSmallBox(g);
+        if (isAlive) {
+            if (wpn.isActive()) {
+                wpn.draw(g);
+            }
+
+            super.draw(g);
+            drawSmallBox(g);
+        }
 
 
     }
@@ -155,6 +159,10 @@ public class Player extends Sprite {
         if (getCurrentHP() > 0) {
             health--;
         }
+
+        if (health == 0) {
+            isAlive = false;
+        }
     }
 
     public void takeDamage() {
@@ -162,6 +170,10 @@ public class Player extends Sprite {
             startInvulFrame();
             decreaseCurrentHP();
         }
+    }
+
+    public boolean isAlive() {
+        return isAlive;
     }
 
     public void startInvulFrame() {
@@ -176,6 +188,7 @@ public class Player extends Sprite {
         iframeTimer++;
     }
 
+
     public boolean canTakeDamage() {
         return canTakeDamage;
     }
@@ -185,16 +198,19 @@ public class Player extends Sprite {
     }
 
     public void useWeapon() {
-        wpn.setDir(this.direction);
-        wpn.setPosition();
-        wpn.setActive();
+        if (canUseWpn) {
+            wpn.setDir(this.direction);
+            wpn.setPosition();
+            wpn.setActive();
+        }
+
     }
 
     public void hideWeapon() {
         wpn.setInactive();
     }
 
-    public Rect getWeapon() {
+    public Weapon getWeapon() {
         return this.wpn;
     }
 

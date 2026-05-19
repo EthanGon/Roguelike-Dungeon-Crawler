@@ -11,6 +11,7 @@ public class Room {
     private Image northSouthDoorOn =    new ImageIcon(getClass().getResource("room_art/ns-blockade-on.png")).getImage();
     private Image eastWestDoorOn =      new ImageIcon(getClass().getResource("room_art/ew-blockade-on.png")).getImage();
 
+    private static Room bossRoom;
     private static int numRooms = 0;
     private final int x;
     private final int y;
@@ -98,7 +99,7 @@ public class Room {
 
     public void drawEnemies(Graphics g) {
         for (Enemy e : enemies) {
-            if (e.isDead()) {
+            if (e.isAlive()) {
                 e.draw(g);
             }
         }
@@ -110,19 +111,17 @@ public class Room {
 
         g.drawImage(roomImage, x - cx , y - cy, null);
 
-        // draw the connection to adjacent rooms
-        if (!roomCleared) {
-            if (adjRooms[0] != null) {g.drawImage(northSouthDoorOn, (x + 576) - cx, y - cy, null);} // 0 TOP
-            if (adjRooms[2] != null) {g.drawImage(northSouthDoorOn, (x + 576) - cx, (y + 864) - cy, null);} // 2 BOT
-            if (adjRooms[1] != null) {g.drawImage(eastWestDoorOn, x - cx, (y + 384) - cy, null);} // 3 EAST
-            if (adjRooms[3] != null) {g.drawImage(eastWestDoorOn, (x + 1248) - cx, (y + 384) - cy, null);} // 1 WEST
-        } else {
-            if (adjRooms[0] != null) {g.drawImage(northSouthDoorOff, (x + 576) - cx, y - cy, null);} // 0 TOP
-            if (adjRooms[2] != null) {g.drawImage(northSouthDoorOff, (x + 576) - cx, (y + 864) - cy, null);} // 2 BOT
-            if (adjRooms[1] != null) {g.drawImage(eastWestDoorOff, x - cx, (y + 384) - cy, null);} // 3 EAST
-            if (adjRooms[3] != null) {g.drawImage(eastWestDoorOff, (x + 1248) - cx, (y + 384) - cy, null);} // 1 WEST
-        }
+        if (adjRooms[0] != null) {g.drawImage(northSouthDoorOn, (x + 576) - cx, y - cy, null);} // 0 TOP
+        if (adjRooms[2] != null) {g.drawImage(northSouthDoorOn, (x + 576) - cx, (y + 864) - cy, null);} // 2 BOT
+        if (adjRooms[1] != null) {g.drawImage(eastWestDoorOn, x - cx, (y + 384) - cy, null);} // 3 EAST
+        if (adjRooms[3] != null) {g.drawImage(eastWestDoorOn, (x + 1248) - cx, (y + 384) - cy, null);} // 1 WEST
+
+        if (adjRooms[0] != null && !doorBounds[0].hasCollision) {g.drawImage(northSouthDoorOff, (x + 576) - cx, y - cy, null);} // 0 TOP
+        if (adjRooms[2] != null && !doorBounds[2].hasCollision) {g.drawImage(northSouthDoorOff, (x + 576) - cx, (y + 864) - cy, null);} // 2 BOT
+        if (adjRooms[1] != null && !doorBounds[1].hasCollision) {g.drawImage(eastWestDoorOff, x - cx, (y + 384) - cy, null);} // 3 EAST
+        if (adjRooms[3] != null && !doorBounds[3].hasCollision) {g.drawImage(eastWestDoorOff, (x + 1248) - cx, (y + 384) - cy, null);} // 1 WEST
     }
+
 
     private void drawWalkableSpace(Graphics g) {
         g.setColor(Color.lightGray);
@@ -187,6 +186,12 @@ public class Room {
     }
 
    public void checkColl() {
+        roomWallCollisions();
+        checkEnemyCollisions();
+
+   }
+
+   public void roomWallCollisions() {
        for (int i = 0; i < roomBounds.length; i++) {
            if (roomBounds[i].overlaps(Player.GetPlayer())) {
                roomBounds[i].pushes(Player.GetPlayer());
@@ -198,21 +203,39 @@ public class Room {
                doorBounds[i].pushes(Player.GetPlayer());
            }
        }
+   }
 
+   public void checkEnemyCollisions() {
+       if (enemiesDead == enemies.size() || (roomNumber == 1)) {return;};
 
-       if (enemiesDead == enemies.size()) {return;};
        for (Enemy e : enemies) {
-           if (e.isDead() && e.overlaps(Player.GetPlayer().getWeapon())) {
+           if (e.isAlive() && e.overlaps(Player.GetPlayer().getSmallerBox())) {
+               Player.GetPlayer().takeDamage();
+           }
+       }
+
+       for (Enemy e : enemies) {
+           if (e.isAlive() && e.overlaps(Player.GetPlayer().getWeapon()) && Player.GetPlayer().getWeapon().isActive() && !hasBoss) {
                e.setDead();
                enemiesDead++;
 
                if (enemiesDead == enemies.size()) {
                    setRoomCleared();
+                   LevelLogic.increaseClearedRooms();
+               }
+           }
+
+       }
+
+       if (hasBoss) {
+           Enemy boss = enemies.getFirst();
+           if (boss.isAlive() && boss.overlaps(Player.GetPlayer().getWeapon())) {
+               boss.enemyHP--;
+               if (boss.enemyHP == 0) {
+                   boss.setDead();
                }
            }
        }
-
-
    }
 
    public Rect getDoor(int index) {
@@ -226,6 +249,10 @@ public class Room {
                 doorBounds[i].hasCollision = true;
             }
         }
+
+
+
+
    }
 
     public void setRoomCleared() {
@@ -233,15 +260,20 @@ public class Room {
         hasEnemies = false;
 
         for (int i = 0; i < adjRooms.length; i++) {
-            if (adjRooms[i] != null) {
+            if (adjRooms[i] != null && !adjRooms[i].hasBoss()) {
                 doorBounds[i].hasCollision = false;
             }
 
+            if (adjRooms[i] != null && adjRooms[i].hasBoss()) {
+                doorBounds[i].hasCollision = true;
+            }
         }
 
         for (Enemy e : enemies) {
             e.setDead();
         }
+
+
     }
 
     public boolean isRoomCleared() {
@@ -258,7 +290,7 @@ public class Room {
 
     public void moveEnemies() {
         for (Enemy e : enemies) {
-            if (e.isDead() && !e.overlaps(Player.GetPlayer().getSmallerBox())) {
+            if (e.isAlive() && !e.overlaps(Player.GetPlayer().getSmallerBox())) {
                 e.chase(Player.GetPlayer());
             }
         }
@@ -306,6 +338,18 @@ public class Room {
 
     public void giveBoss() {
         hasBoss = true;
+        bossRoom = this;
+
+        enemies.clear();
+        enemies.add(new Bat(x + (rw/2), y + (rh/2)));
+        Enemy boss = enemies.getFirst();
+
+        boss.w *= 2;
+        boss.h *= 2;
+        Enemy.boss = boss;
+        boss.enemyMaxHP = 350;
+        boss.enemyHP = boss.enemyMaxHP;
+
     }
 
     public int numConnections() {
@@ -323,6 +367,37 @@ public class Room {
     public int getRoomNumber() {
         return roomNumber;
     }
+
+    public static Rect findBossDoor() {
+        Room adjRoomToBoss = null;
+
+        for (int i = 0; i < 4; i++) {
+            if (bossRoom.adjRooms[i] != null) {
+                adjRoomToBoss = bossRoom.adjRooms[i];
+                break;
+            }
+        }
+
+        for (int i = 0; i < 4; i++) {
+            if (adjRoomToBoss.adjRooms[i] != null && adjRoomToBoss.adjRooms[i].hasBoss) {
+                System.out.println(adjRoomToBoss.adjRooms[i].doorBounds[i]);
+                return adjRoomToBoss.doorBounds[i];
+            }
+        }
+
+        return null;
+    }
+
+    public static void resetNumRooms() {
+        numRooms = 0;
+    }
+
+    public static Room getBossRoom() {
+        return bossRoom;
+    }
+
+
+
 
 
 

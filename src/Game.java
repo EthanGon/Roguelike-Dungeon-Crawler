@@ -6,8 +6,9 @@ public class Game extends GameBase {
     private MapGen map;
     private Player p;
     private int playerSpeed;
-    private LevelMusic bgm;
+    private LevelMusic bgm = new LevelMusic("src/sfx/binding_of_isaac_track.wav");;
     private Hud ui;
+
 
     @Override
     public void start() {
@@ -15,14 +16,12 @@ public class Game extends GameBase {
         mainCam = new Camera();
         map = new MapGen();
         p = new Player(GetGameWidth()/2 - (96/2),GetGameHeight()/2 - (96/2), Player.DN, 96);
-        playerSpeed = 5;
-        bgm = new LevelMusic("src/sfx/binding_of_isaac_track.wav");
+        playerSpeed = 6;
         bgm.loop();
         ui = new Hud();
     }
 
     public void inGameLoop() {
-
         handleInput();
         p.update();
 
@@ -36,9 +35,14 @@ public class Game extends GameBase {
     }
 
     public void handleInput() {
-        movePlayer();
-        useWeapon();
-        toggleMap();
+        if (Player.GetPlayer().isAlive()) {
+            movePlayer();
+            useWeapon();
+            toggleMap();
+        }
+
+        restartLevel();
+        closeGame();
 
     }
 
@@ -51,10 +55,26 @@ public class Game extends GameBase {
     }
 
     public void useWeapon() {
-        if (pressing[SPACE]) {
+        if (pressing[SPACE] && p.canUseWpn) {
             p.useWeapon();
         } else {
             p.hideWeapon();
+        }
+
+
+    }
+
+    public void restartLevel() {
+        if (pressing[_R]) {
+            bgm.stop();
+            LevelLogic.restartStats();
+            start();
+        }
+    }
+
+    public void closeGame() {
+        if (pressing[ESC]) {
+            System.exit(0);
         }
     }
 

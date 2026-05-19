@@ -18,11 +18,6 @@ public class Rect {
     static final int LT = 2;
     static final int RT = 3;
 
-    static final int UL = 4;
-    static final int DL = 5;
-    static final int UR = 6;
-    static final int DR = 7;
-
     // used for map dir
     boolean[] dir = new boolean[4];
 

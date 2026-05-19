@@ -3,8 +3,11 @@ import java.awt.*;
 
 public class Hud {
 
+    private Image restartScreen =           new ImageIcon(getClass().getResource("restart_screen.png")).getImage();
     private Image[] heartIcons = new Image[3];
     private int scale = 16 * 5;
+    private int rw = 96 * 14;
+    private int rh = 96 * 10;
 
     public Hud () {
         loadIcons();
@@ -18,6 +21,14 @@ public class Hud {
 
     public void draw(Graphics g) {
         drawHealthDisplay(g);
+
+        if (!Player.GetPlayer().isAlive() || !Enemy.boss.isAlive()) {
+            drawRestartScreen(g);
+        }
+
+        if (MapGen.GetInstance().getRoomContainingPlayer() == Room.getBossRoom() && Enemy.boss.isAlive()) {
+            drawBossHealth(g);
+        }
     }
 
     public void drawHealthDisplay(Graphics g) {
@@ -33,6 +44,26 @@ public class Hud {
             }
             g.drawImage(heartIcons[0], i/2 * scale, 0, scale, scale, null);
         }
+    }
+
+    public void drawRestartScreen(Graphics g) {
+        g.drawImage(restartScreen, 0, 0, null);
+    }
+
+    public void drawBossHealth(Graphics g) {
+        int bw = 500;
+        int bh = 50;
+        int yOffset = 20;
+
+        Enemy boss = Enemy.boss;
+
+        double bossHPPercentage = (double) boss.enemyHP / boss.enemyMaxHP;
+
+        g.setColor(new Color(0, 0, 0, 137));
+        g.fillRect((this.rw / 2) - (bw/2),yOffset, bw, bh);
+        g.setColor(Color.RED);
+        g.fillRect((this.rw / 2) - (bw/2),yOffset, (int) (((bossHPPercentage*100)/100) * bw), bh);
+
     }
 
 
