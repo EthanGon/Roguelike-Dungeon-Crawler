@@ -91,15 +91,4 @@ public class Rect {
 
     }
 
-    public boolean contains(int mx, int my) {
-        return  (mx > x)   &&
-                (mx < x+w) &&
-                (my > y)   &&
-                (my < y+h);
-    }
-
-
-
-
-
 }

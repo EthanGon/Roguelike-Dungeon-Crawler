@@ -9,7 +9,6 @@ public class Game extends GameBase {
     private LevelMusic bgm = new LevelMusic("src/sfx/binding_of_isaac_track.wav");;
     private Hud ui;
 
-
     @Override
     public void start() {
         GameSeed.init();
@@ -24,7 +23,6 @@ public class Game extends GameBase {
     public void inGameLoop() {
         handleInput();
         p.update();
-
     }
 
     public void paint(Graphics g) {

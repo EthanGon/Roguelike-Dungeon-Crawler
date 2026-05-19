@@ -1,8 +1,6 @@
 public class Camera {
     public int x;
     public int y;
-    int rw = 96 * 14;
-    int rh = 96 * 10;
 
     private static Camera instance;
 
