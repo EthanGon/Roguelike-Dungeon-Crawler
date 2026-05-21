@@ -13,6 +13,7 @@ public class Enemy extends Sprite {
 
     public void chase(Rect r) {
         if(isDead) return;
+
         if(x > r.x){
             moveLT(moveSpeed);
         }

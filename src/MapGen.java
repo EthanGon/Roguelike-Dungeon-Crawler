@@ -100,6 +100,14 @@ public class MapGen {
 
         }
 
+        rollRoomsEnemies();
+
+        long endTime = System.nanoTime();
+        long elapsedTime = endTime - startTime;
+        System.out.println("Map Creation Elapsed Time: " + (elapsedTime / 1e+9 + " seconds"));
+    }
+
+    public void rollRoomsEnemies() {
         // Decide if room should have enemies
         for (int i = 1; i < rooms.size(); i++) {
             int spawnEnemies = chanceInt(85);
@@ -114,10 +122,6 @@ public class MapGen {
 
         }
         rooms.getFirst().setRoomCleared();
-
-        long endTime = System.nanoTime();
-        long elapsedTime = endTime - startTime;
-        System.out.println("Map Creation Elapsed Time: " + (elapsedTime / 1e+9 + " seconds"));
     }
 
     public void draw(Graphics g) {
@@ -196,7 +200,6 @@ public class MapGen {
 
     public void processNewRooms() {
         rects.addAll(newRoomsOnMap);
-
         rooms.addAll(newRooms);
         newRoomsOnMap.clear();
         newRooms.clear();
@@ -325,17 +328,16 @@ public class MapGen {
 
     // Sets the boss rooms to be the fartest room that has one door
     public void setBossRoom() {
-        Room fartest = roomsWithOneDoor().getFirst();
-        double d = distanceBetweenRooms(rooms.getFirst(), fartest);
+        Room farthestFromSpawn = roomsWithOneDoor().getFirst();
+        double d = distanceBetweenRooms(rooms.getFirst(), farthestFromSpawn);
 
         for (int i = 0; i < roomsWithOneDoor().size(); i++) {
             if (distanceBetweenRooms(rooms.getFirst(), roomsWithOneDoor().get(i)) > d) {
-                fartest = roomsWithOneDoor().get(i);
+                farthestFromSpawn = roomsWithOneDoor().get(i);
             }
         }
 
-
-        fartest.giveBoss();
+        farthestFromSpawn.giveBoss();
         Room.findBossDoor().hasCollision = true;
     }
 

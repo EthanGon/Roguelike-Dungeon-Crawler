@@ -136,9 +136,6 @@ public abstract class GameBase extends Canvas implements Runnable, KeyListener {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-
-
-
         off_screen   = createImage(gw, gh);
         off_screen_g = off_screen.getGraphics();
 
@@ -152,15 +149,9 @@ public abstract class GameBase extends Canvas implements Runnable, KeyListener {
 
     }
 
-    public final void keyPressed(KeyEvent e)
-    {
-        pressing[e.getKeyCode()] = true;
-    }
+    public final void keyPressed(KeyEvent e) {pressing[e.getKeyCode()] = true;}
 
-    public final void keyReleased(KeyEvent e)
-    {
-        pressing[e.getKeyCode()] = false;
-    }
+    public final void keyReleased(KeyEvent e) {pressing[e.getKeyCode()] = false;}
 
     public void keyTyped(KeyEvent e)  {}
 

@@ -17,8 +17,8 @@ public class Room {
     private final int y;
     private int pixelSize = 96;
     private int roomNumber;
-    private int rw = 96 * 14;
-    private int rh = 96 * 10;
+    private int rw = pixelSize * 14;
+    private int rh = pixelSize * 10;
     private boolean hasBoss;
 
     private boolean hasEnemies;
@@ -27,7 +27,7 @@ public class Room {
     private Room[] adjRooms = new Room[4];
     private Rect[] doorBounds = new Rect[4];
     private Rect[] roomBounds = new Rect[8];
-    private Rect[] walkableSpace = new Rect[12 * 8];
+    private Rect[] roomTile = new Rect[12 * 8];
     private Rect[] entryPoints = new Rect[4];
     private Rect roomBox;
     private ArrayList<Enemy> enemies = new ArrayList<>();
@@ -37,8 +37,9 @@ public class Room {
         this.x = x;
         this.y = y;
         initRoomBounds();
-        createRoomSwitchSpawns();
         createWalkableGrid();
+        createRoomSwitchSpawns();
+
         numRooms++;
         roomNumber = numRooms;
     }
@@ -52,10 +53,13 @@ public class Room {
     public void createRoomSwitchSpawns() {
 
         // Counter Clockwise (N,W,S,E)
-        entryPoints[0] = new Rect(x + (96 * 6) + 48, y + 96, 96, 96);
-        entryPoints[1] = new Rect(x + 96, y + (96 * 4) + 48, 96, 96);
-        entryPoints[2] = new Rect(x + (96 * 6) + 48, y + (96 * 8), 96, 96);
-        entryPoints[3] = new Rect(x + (96 * 12), y + (96 * 4) + 48, 96, 96);
+//        entryPoints[0] = new Rect(x + (pixelSize * 6) + 48, y + pixelSize, pixelSize, pixelSize);
+        int halfSize = pixelSize/2;
+
+        entryPoints[0] = new Rect(roomTile[5].x + halfSize, roomTile[5].y, pixelSize, pixelSize);
+        entryPoints[1] = new Rect(roomTile[36].x, roomTile[36].y + halfSize, pixelSize, pixelSize);
+        entryPoints[2] = new Rect(roomTile[89].x + halfSize, roomTile[89].y, pixelSize, pixelSize);
+        entryPoints[3] = new Rect(roomTile[47].x, roomTile[47].y + halfSize, pixelSize, pixelSize);
 
         for (Rect b : entryPoints) {
             b.project = true;
@@ -63,24 +67,24 @@ public class Room {
     }
 
     public void createWalkableGrid() {
-        int xo = 96;
-        int yo = 96;
-        int size = walkableSpace.length;
+        int xo = pixelSize;
+        int yo = pixelSize;
+        int size = roomTile.length;
         int index = 0;
         int countSwitch = 0;
 
-        int startX = x + 96;
-        int startY = y + 96;
+        int startX = x + pixelSize;
+        int startY = y + pixelSize;
 
         for (int i = 0; i < size; i++) {
-            walkableSpace[index] = new Rect(startX, startY, 96,96);
-            walkableSpace[index].project = true;
+            roomTile[index] = new Rect(startX, startY, pixelSize,pixelSize);
+            roomTile[index].project = true;
             startX += xo;
             index++;
             countSwitch++;
 
             if (countSwitch >= 12) {
-                startX = x + 96;
+                startX = x + pixelSize;
                 startY += yo;
                 countSwitch = 0;
             }
@@ -92,7 +96,7 @@ public class Room {
         drawRoom(g);
         drawRoomBounds(g);
         drawEntryPoints(g);
-        drawWalkableSpace(g);
+        drawroomTile(g);
         drawEnemies(g);
 
     }
@@ -123,11 +127,11 @@ public class Room {
     }
 
 
-    private void drawWalkableSpace(Graphics g) {
+    private void drawroomTile(Graphics g) {
         g.setColor(Color.lightGray);
 
         int i = 0;
-        for (Rect r : walkableSpace) {
+        for (Rect r : roomTile) {
             g.drawString("Room: #" + roomNumber, r.x - Camera.GetInstance().getX(), r.y - Camera.GetInstance().getY() + 12);
             g.drawString("Tile: #" + i, r.x - Camera.GetInstance().getX(), r.y - Camera.GetInstance().getY() + 24);
             r.draw(g);
@@ -159,10 +163,10 @@ public class Room {
             b.project = true;
         }
 
-        doorBounds[0] = new Rect(x + 576, y, 96 * 2, 96); // TOP
-        doorBounds[2] = new Rect(x + 576, y + 864, 96 * 2, 96); // BOT
-        doorBounds[1] = new Rect(x, y + 384, 96, 96 * 2); // LEFT
-        doorBounds[3] = new Rect(x + 1248, y + 384, 96, 96 * 2); // RIGHT
+        doorBounds[0] = new Rect(x + 576, y, pixelSize * 2, pixelSize); // TOP
+        doorBounds[2] = new Rect(x + 576, y + 864, pixelSize * 2, pixelSize); // BOT
+        doorBounds[1] = new Rect(x, y + 384, pixelSize, pixelSize * 2); // LEFT
+        doorBounds[3] = new Rect(x + 1248, y + 384, pixelSize, pixelSize * 2); // RIGHT
 
         for (Rect b : doorBounds) {
             b.project = true;
@@ -229,7 +233,7 @@ public class Room {
 
        if (hasBoss) {
            Enemy boss = enemies.getFirst();
-           if (boss.isAlive() && boss.overlaps(Player.GetPlayer().getWeapon())) {
+           if (boss.isAlive() && boss.overlaps(Player.GetPlayer().getWeapon()) && Player.GetPlayer().getWeapon().isActive()) {
                boss.enemyHP--;
                if (boss.enemyHP == 0) {
                    boss.setDead();
@@ -309,11 +313,11 @@ public class Room {
     }
 
     public Rect getTile(int index) {
-        return walkableSpace[index];
+        return roomTile[index];
     }
 
     public int getNumTiles() {
-        return walkableSpace.length;
+        return roomTile.length;
     }
 
     public Rect getEntryPoint(int index) {
@@ -347,7 +351,7 @@ public class Room {
         boss.w *= 2;
         boss.h *= 2;
         Enemy.boss = boss;
-        boss.enemyMaxHP = 350;
+        boss.enemyMaxHP = 250;
         boss.enemyHP = boss.enemyMaxHP;
 
     }

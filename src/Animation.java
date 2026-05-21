@@ -11,9 +11,7 @@ public class Animation {
     public Animation(String name, int count, int duration, String filetype)
     {
         images = new Image[count];
-
         this.duration = duration;
-
         delay = duration;
 
         for(int i = 0; i < images.length; i++)
