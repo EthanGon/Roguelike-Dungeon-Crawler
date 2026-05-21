@@ -254,9 +254,6 @@ public class Room {
             }
         }
 
-
-
-
    }
 
     public void setRoomCleared() {

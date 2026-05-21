@@ -11,7 +11,7 @@ public class MapGen {
     private Queue<Room> newRooms = new LinkedList<>();
     private Room containingPlayer;
     private static MapGen instance;
-    private int maxRoom = 10;
+    private int maxRoom = 5;
 
     public int rw = 96 * 14;
     public int rh = 96 * 10;

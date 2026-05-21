@@ -3,7 +3,7 @@ import java.awt.*;
 
 public class Hud {
 
-    private Image restartScreen =           new ImageIcon(getClass().getResource("restart_screen.png")).getImage();
+    private Image restartScreen =           new ImageIcon(getClass().getResource("ui_art/restart_screen.png")).getImage();
     private Image[] heartIcons = new Image[3];
     private int scale = 16 * 5;
     private int rw = 96 * 14;

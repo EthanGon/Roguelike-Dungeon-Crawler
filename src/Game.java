@@ -63,8 +63,6 @@ public class Game extends GameBase {
     }
 
     public void restartLevel() {
-
-
         if (pressing[_R]) {
             bgm.stop();
             LevelLogic.restartStats();

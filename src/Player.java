@@ -130,7 +130,6 @@ public class Player extends Sprite {
             drawSmallBox(g);
         }
 
-
     }
 
     public void drawSmallBox(Graphics g) {
