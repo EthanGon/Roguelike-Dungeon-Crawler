@@ -3,7 +3,7 @@ Project Video Playlist - https://www.youtube.com/playlist?list=PLMYNxhmoFM4b1Zp-
 
 ### How to Run the Game
 
-- Download **MyGame.zip**
+- Download **MyGame.zip** in releases
 - Unzip the downloaded file
 - Open the unzipped folder
 - Double‑click **MyGame.exe** to start the game
