@@ -6,18 +6,22 @@ public class Game extends GameBase {
     private MapGen map;
     private Player p;
     private int playerSpeed;
-    private LevelMusic bgm = new LevelMusic("src/sfx/binding_of_isaac_track.wav");;
+    private LevelMusic bgm = new LevelMusic("sfx/binding_of_isaac_track.wav");
     private Hud ui;
 
     @Override
     public void start() {
-        GameSeed.init();
-        mainCam = new Camera();
-        map = new MapGen();
-        p = new Player(GetGameWidth()/2 - (96/2),GetGameHeight()/2 - (96/2), Player.DN, 96);
-        playerSpeed = 6;
-        bgm.loop();
-        ui = new Hud();
+        try {
+            GameSeed.init();
+            mainCam = new Camera();
+            map = new MapGen();
+            p = new Player(GetGameWidth()/2 - (96/2), GetGameHeight()/2 - (96/2), Player.DN, 96);
+            playerSpeed = 6;
+            bgm.loop();
+            ui = new Hud();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void inGameLoop() {

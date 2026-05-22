@@ -11,7 +11,7 @@ public class LevelMusic {
     public LevelMusic (String filename) {
         try {
             File file = new File(filename);
-            AudioInputStream audioInput = AudioSystem.getAudioInputStream(file);
+            AudioInputStream audioInput = AudioSystem.getAudioInputStream(getClass().getResource(filename));
 
             clip = AudioSystem.getClip();
             clip.open(audioInput);

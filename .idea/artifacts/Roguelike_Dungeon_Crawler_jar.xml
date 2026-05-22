@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Roguelike Dungeon Crawler:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Roguelike_Dungeon_Crawler_jar</output-path>
+    <root id="archive" name="Roguelike Dungeon Crawler.jar">
+      <element id="module-output" name="Roguelike Dungeon Crawler" />
+    </root>
+  </artifact>
+</component>

@@ -20,7 +20,7 @@ public class Player extends Sprite {
     private Weapon wpn;
 
     public Player(int x, int y, int dir, int size) {
-        super("src/player_animation/p", x,y, size,size, dir, pose);
+        super("player_animation/p", x,y, size,size, dir, pose);
         this.project = true;
         instance = this;
         health = maxHeath;

@@ -46,6 +46,6 @@ public class Animation {
 
     public Image getImage(String filename)
     {
-        return new ImageIcon(filename).getImage();
+        return new ImageIcon(getClass().getResource(filename)).getImage();
     }
 }
