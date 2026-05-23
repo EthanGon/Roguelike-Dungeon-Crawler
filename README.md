@@ -1,5 +1,9 @@
 Project Video Playlist - https://www.youtube.com/playlist?list=PLMYNxhmoFM4b1Zp-Xz7-MafpTD9T6LROM
 
+### Quick Notes
+- A short game that has procedurally generated dungeons similar to Binding of Isaac
+- 'R' to restart, 'Esc' to close game, 'Space' to attack.
+
 
 ### How to Run the Game
 
