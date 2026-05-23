@@ -15,3 +15,5 @@ Project Video Playlist - https://www.youtube.com/playlist?list=PLMYNxhmoFM4b1Zp-
 
 Make sure all files stay in the same folder.  
 Do not move **MyGame.exe** outside of the folder it came in.
+
+<img src="gameimg.png" alt="Alt text" style="width:50%; height:auto;">
